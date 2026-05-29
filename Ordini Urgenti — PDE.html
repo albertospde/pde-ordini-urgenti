@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ordini Urgenti — PDE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --blu:       #1a2d6b;
+  --blu-mid:   #223580;
+  --blu-light: #2d4fa0;
+  --azzurro:   #00b4e8;
+  --azzurro-dim: rgba(0,180,232,.15);
+  --azzurro-glow: rgba(0,180,232,.08);
+
+  --bg:        #0e1628;
+  --bg-card:   #131e38;
+  --bg-input:  #0b1122;
+  --bg-raise:  #182040;
+  --bg-dest:   #101828;
+
+  --bordo:     rgba(255,255,255,.08);
+  --bordo-az:  rgba(0,180,232,.3);
+
+  --testo:     #e8edf8;
+  --testo-dim: #8b9bc4;
+  --testo-sub: #4f618a;
+
+  --success:   #00d48c;
+  --warn:      #f5a623;
+  --rosso:     #ff3a5e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--testo);
+  min-height: 100vh;
+}
+
+/* ── BG TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 0%, rgba(26,45,107,.45) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 90% 100%, rgba(0,180,232,.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.container, header, .turno-banner, #auth-screen { position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+header {
+  background: rgba(13,22,48,.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bordo);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand { display: flex; align-items: center; gap: .7rem; }
+.header-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: .12em;
+}
+.header-sep { width: 1px; height: 18px; background: var(--bordo); }
+.header-title {
+  font-size: .82rem;
+  font-weight: 500;
+  color: var(--testo-dim);
+  letter-spacing: .04em;
+}
+.header-badge {
+  background: var(--azzurro);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: .15rem .55rem;
+  border-radius: 20px;
+}
+.header-user {
+  display: flex; align-items: center; gap: .5rem;
+  color: var(--testo-dim); font-size: .8rem;
+}
+.user-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
+
+/* ── TURNO BANNER ── */
+.turno-banner {
+  background: linear-gradient(90deg, var(--blu) 0%, var(--blu-light) 100%);
+  border-bottom: 1px solid var(--bordo-az);
+  color: rgba(255,255,255,.8);
+  text-align: center;
+  padding: .5rem 1rem;
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .03em;
+}
+.turno-banner span {
+  font-family: 'DM Mono', monospace;
+  color: var(--azzurro);
+  font-weight: 500;
+  padding: .03rem .3rem;
+}
+
+/* ── CONTAINER ── */
+.container { max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+/* ── AUTH ── */
+#auth-screen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: calc(100vh - 58px);
+}
+.auth-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bordo);
+  border-radius: 14px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  text-align: center;
+}
+.auth-card .auth-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: .18em;
+  margin-bottom: .3rem;
+}
+.auth-card .auth-sub {
+  font-size: .78rem;
+  color: var(--testo-sub);
+  margin-bottom: 2rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.auth-card input {
+  width: 100%;
+  padding: .7rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--bordo);
+  border-radius: 8px;
+  font-size: .9rem;
+  font-family: inherit;
+  color: var(--testo);
+  margin-bottom: .65rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.auth-card input:focus { border-color: var(--azzurro); }
+.auth-card input::placeholder { color: var(--testo-sub); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .62rem 1.3rem;
+  border-radius: 8px;
+  font-family: inherit; font-size: .85rem; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all .16s;
+  letter-spacing: .02em;
+}
+.btn-primary {
+  background: var(--azzurro);
+  color: #fff; width: 100%; justify-content: center;
+}
+.btn-primary:hover { background: #02c5ff; box-shadow: 0 0 16px rgba(0,180,232,.35); }
+
+.btn-accent {
+  background: var(--azzurro); color: #fff;
+}
+.btn-accent:hover { background: #02c5ff; box-shadow: 0 0 14px rgba(0,180,232,.3); }
+
+.btn-danger {
+  background: transparent; color: var(--rosso);
+  border: 1px solid rgba(255,58,94,.35);
+  padding: .38rem .85rem; font-size: .78rem;
+}
+.btn-danger:hover { background: rgba(255,58,94,.12); border-color: var(--rosso); }
+
+.btn-ghost {
+  background: transparent; color: var(--testo-dim);
+  border: 1px solid var(--bordo);
+  font-size: .82rem; padding: .38rem .85rem;
+}
+.btn-ghost:hover { border-color: var(--azzurro); color: var(--azzurro); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: .3rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--bordo);
+  border-radius: 10px;
+  padding: .3rem;
+  margin-bottom: 1.8rem;
+}
+.tab-btn {
+  flex: 1; padding: .52rem; border: none; border-radius: 7px;
+  font-family: inherit; font-size: .84rem; font-weight: 600;
+  cursor: pointer; transition: all .16s;
+  background: transparent; color: var(--testo-dim);
+}
+.tab-btn.active {
+  background: var(--blu-light);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+
+/* ── SECTION HEAD ── */
+.section-head { margin-bottom: 1.5rem; }
+.section-head h1 { font-size: 1.3rem; font-weight: 600; color: #fff; }
+.section-head p { color: var(--testo-dim); font-size: .82rem; margin-top: .25rem; }
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bordo);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.4rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+.form-card-header {
+  background: rgba(26,45,107,.6);
+  border-bottom: 1px solid var(--bordo);
+  padding: .85rem 1.4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 600; font-size: .88rem; color: #fff;
+  letter-spacing: .02em;
+}
+.form-card-header .counter {
+  font-family: 'DM Mono', monospace; font-size: .72rem;
+  background: var(--azzurro-dim);
+  color: var(--azzurro);
+  padding: .14rem .55rem; border-radius: 20px;
+}
+.form-body { padding: 1.3rem; }
+.form-footer {
+  padding: .9rem 1.3rem 1.3rem;
+  border-top: 1px solid var(--bordo);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+}
+.form-footer-info { font-size: .78rem; color: var(--testo-sub); font-family: 'DM Mono', monospace; }
+
+/* ── DEST BLOCK ── */
+.dest-block {
+  border: 1px solid var(--bordo);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  background: var(--bg-dest);
+}
+.dest-block-head {
+  background: rgba(26,45,107,.35);
+  border-bottom: 1px solid var(--bordo);
+  padding: .55rem 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dest-block-head-label {
+  font-family: 'DM Mono', monospace;
+  font-size: .75rem; font-weight: 500;
+  color: var(--azzurro);
+  letter-spacing: .08em;
+}
+.dest-block-body { padding: 1rem; }
+
+/* ── GRID & FIELDS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .7rem; }
+.grid-full { grid-column: 1/-1; }
+
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label {
+  font-size: .7rem; font-weight: 600;
+  color: var(--testo-sub);
+  letter-spacing: .07em; text-transform: uppercase;
+}
+.field label .req { color: var(--azzurro); margin-left: .1rem; }
+.field input, .field select, .field textarea {
+  padding: .58rem .85rem;
+  background: var(--bg-input);
+  border: 1px solid var(--bordo);
+  border-radius: 7px;
+  font-family: inherit; font-size: .88rem;
+  color: var(--testo);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--testo-sub); }
+.field input:focus, .field select:focus {
+  border-color: var(--azzurro);
+  box-shadow: 0 0 0 3px rgba(0,180,232,.1);
+}
+.field input.error { border-color: var(--rosso); box-shadow: 0 0 0 3px rgba(255,58,94,.1); }
+.field select option { background: var(--bg-card); color: var(--testo); }
+
+/* ── ARTICOLI ── */
+.articoli-list { display: flex; flex-direction: column; gap: .55rem; margin-bottom: .7rem; }
+.articolo-row {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 80px 80px 26px;
+  gap: .5rem; align-items: end;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--bordo);
+  border-radius: 8px;
+  padding: .6rem .7rem;
+}
+.articolo-row .field label { font-size: .65rem; }
+.remove-row {
+  background: none; border: none; cursor: pointer;
+  color: var(--testo-sub); font-size: 1rem;
+  padding: .2rem; border-radius: 4px;
+  transition: color .14s; margin-bottom: 2px;
+}
+.remove-row:hover { color: var(--rosso); }
+
+.add-articolo-btn {
+  background: none;
+  border: 1px dashed rgba(255,255,255,.15);
+  border-radius: 8px; padding: .5rem;
+  width: 100%; text-align: center;
+  cursor: pointer; font-family: inherit;
+  font-size: .8rem; color: var(--testo-sub);
+  transition: all .16s; font-weight: 500;
+}
+.add-articolo-btn:hover {
+  border-color: var(--azzurro); color: var(--azzurro);
+  background: var(--azzurro-glow);
+}
+
+/* ── DEST ALT ── */
+.toggle-dest-alt {
+  display: flex; align-items: center; gap: .5rem;
+  cursor: pointer; font-size: .8rem; font-weight: 500;
+  color: var(--testo-dim); margin-bottom: .65rem; user-select: none;
+}
+.toggle-dest-alt input[type="checkbox"] { accent-color: var(--azzurro); width: 14px; height: 14px; cursor: pointer; }
+.toggle-dest-alt:hover { color: var(--testo); }
+
+.dest-alt-block {
+  background: var(--azzurro-glow);
+  border: 1px solid var(--bordo-az);
+  border-radius: 8px; padding: 1rem;
+  margin-top: .4rem; margin-bottom: .65rem;
+}
+.dest-alt-title {
+  font-size: .7rem; font-weight: 700;
+  color: var(--azzurro);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: .75rem;
+}
+
+/* ── ADD DEST ── */
+.add-dest-btn {
+  background: none;
+  border: 1.5px dashed rgba(0,180,232,.3);
+  border-radius: 10px; padding: .75rem;
+  width: 100%; text-align: center; cursor: pointer;
+  font-family: inherit; font-size: .83rem; font-weight: 600;
+  color: var(--testo-dim);
+  transition: all .16s;
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
+}
+.add-dest-btn:hover {
+  border-color: var(--azzurro); color: var(--azzurro);
+  background: var(--azzurro-glow);
+}
+
+/* ── ALERTS ── */
+.alert {
+  padding: .7rem 1rem; border-radius: 8px;
+  font-size: .83rem; font-weight: 500;
+  margin-bottom: .9rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+.alert-error { background: rgba(255,58,94,.12); color: #ff8fa3; border: 1px solid rgba(255,58,94,.25); }
+.alert-success { background: rgba(0,212,140,.1); color: #00d48c; border: 1px solid rgba(0,212,140,.25); }
+.alert-info { background: var(--azzurro-glow); color: var(--azzurro); border: 1px solid var(--bordo-az); }
+
+/* ── STORICO ── */
+.storico-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.storico-head h2 { font-size: 1.1rem; font-weight: 600; color: #fff; }
+
+.filter-row { display: flex; gap: .55rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: center; }
+.filter-row select, .filter-row input {
+  padding: .42rem .8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--bordo);
+  border-radius: 7px;
+  font-family: inherit; font-size: .8rem;
+  color: var(--testo); outline: none;
+}
+.filter-row select:focus, .filter-row input:focus { border-color: var(--azzurro); }
+.filter-row select option { background: var(--bg-card); }
+
+.richiesta-card {
+  background: var(--bg-card);
+  border: 1px solid var(--bordo);
+  border-radius: 10px; margin-bottom: .8rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.richiesta-card-head {
+  padding: .65rem 1.1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(26,45,107,.3);
+  border-bottom: 1px solid var(--bordo);
+  gap: .5rem; flex-wrap: wrap;
+}
+.richiesta-meta { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
+
+.tag {
+  font-size: .65rem; font-weight: 700;
+  padding: .15rem .5rem; border-radius: 20px;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.tag-1130 { background: rgba(245,166,35,.15); color: var(--warn); border: 1px solid rgba(245,166,35,.3); }
+.tag-1530 { background: var(--azzurro-dim); color: var(--azzurro); border: 1px solid var(--bordo-az); }
+.tag-agent { background: rgba(0,212,140,.1); color: var(--success); border: 1px solid rgba(0,212,140,.2); }
+.tag-dt { font-size: .75rem; color: var(--testo-sub); font-family: 'DM Mono', monospace; }
+
+.richiesta-card-body { padding: .8rem 1.1rem; }
+.dest-row {
+  border: 1px solid var(--bordo);
+  border-radius: 8px; padding: .6rem .9rem;
+  margin-bottom: .55rem; background: rgba(255,255,255,.02);
+}
+.dest-row:last-child { margin-bottom: 0; }
+.dest-row-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .4rem; flex-wrap: wrap; gap: .4rem; }
+.dest-cod { font-family: 'DM Mono', monospace; font-weight: 500; font-size: .83rem; color: #fff; }
+.dest-alt-badge {
+  font-size: .63rem; font-weight: 700;
+  background: var(--azzurro-dim); color: var(--azzurro);
+  border: 1px solid var(--bordo-az);
+  padding: .1rem .45rem; border-radius: 20px;
+  text-transform: uppercase; letter-spacing: .07em;
+}
+
+.art-table { width: 100%; font-size: .78rem; border-collapse: collapse; }
+.art-table th {
+  text-align: left; font-size: .65rem; color: var(--testo-sub);
+  font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  padding: .18rem .4rem .28rem;
+  border-bottom: 1px solid var(--bordo);
+}
+.art-table td {
+  padding: .22rem .4rem;
+  font-family: 'DM Mono', monospace; color: var(--testo-dim);
+}
+.art-table td.copie { font-weight: 700; color: var(--testo); }
+.copie-warn { color: var(--warn) !important; }
+
+/* ── SPINNER ── */
+.spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.25);
+  border-top-color: #fff;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── EMPTY ── */
+.empty-state { text-align: center; padding: 3rem 1rem; color: var(--testo-sub); }
+.empty-state .icon { font-size: 2rem; margin-bottom: .5rem; opacity: .4; }
+.empty-state p { font-size: .88rem; }
+
+@media (max-width: 600px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .articolo-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <span class="header-logo">PDE</span>
+    <div class="header-sep"></div>
+    <span class="header-title">Ordini Urgenti</span>
+    <span class="header-badge">live</span>
+  </div>
+  <div class="header-user" id="header-user" style="display:none">
+    <div class="user-dot"></div>
+    <span id="user-email-display"></span>
+  </div>
+</header>
+
+<div id="turno-banner" class="turno-banner" style="display:none"></div>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">PDE</div>
+    <div class="auth-sub">Ordini Urgenti</div>
+    <div id="auth-alert"></div>
+    <input type="email" id="login-email" placeholder="email@pde.it" autocomplete="email">
+    <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+    <button class="btn btn-primary" onclick="doLogin()" id="login-btn">Accedi</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('nuova')">+ Nuova richiesta</button>
+      <button class="tab-btn" onclick="showTab('storico')">Storico turno</button>
+    </div>
+
+    <!-- NUOVA -->
+    <div id="tab-nuova">
+      <div class="section-head">
+        <h1>Richiesta ordini urgenti</h1>
+        <p>Uno o più destinatari per invio. Ogni destinatario può avere più articoli e una destinazione alternativa.</p>
+      </div>
+      <div id="global-alert"></div>
+      <div class="form-card">
+        <div class="form-card-header">
+          <span>Destinatari</span>
+          <span class="counter" id="dest-counter">1 destinatario</span>
+        </div>
+        <div class="form-body">
+          <div id="destinatari-container"></div>
+          <button class="add-dest-btn" onclick="addDest()">＋ Aggiungi destinatario</button>
+        </div>
+        <div class="form-footer">
+          <span class="form-footer-info" id="turno-label-form"></span>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <button class="btn btn-ghost" onclick="resetForm()">Azzera</button>
+            <button class="btn btn-accent" onclick="inviaRichiesta()" id="submit-btn">Invia richiesta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORICO -->
+    <div id="tab-storico" style="display:none">
+      <div class="storico-head">
+        <h2>Storico richieste</h2>
+        <button class="btn btn-ghost" onclick="loadStorico()">↻ Aggiorna</button>
+      </div>
+      <div class="filter-row">
+        <select id="filter-turno" onchange="loadStorico()">
+          <option value="">Tutti i turni</option>
+          <option value="11:30">11:30</option>
+          <option value="15:30">15:30</option>
+        </select>
+        <input type="date" id="filter-data" onchange="loadStorico()">
+        <input type="text" id="filter-agente" placeholder="Filtra agente…" oninput="loadStorico()" style="width:160px">
+      </div>
+      <div id="storico-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://tdflwenlylhctxssatax.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZmx3ZW5seWxoY3R4c3NhdGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMzgyNzYsImV4cCI6MjA5MTkxNDI3Nn0.l35qEL7LOvyYuI1McQlVqj4vbyTqmlevcmqWbTGYi2Q';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let destIdCounter = 0;
+let artCounters = {};
+
+// ── AUTH ───────────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd   = document.getElementById('login-password').value;
+  const btn   = document.getElementById('login-btn');
+  const alertEl = document.getElementById('auth-alert');
+
+  alertEl.innerHTML = '';
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+  btn.innerHTML = 'Accedi';
+  btn.disabled = false;
+
+  if (error) {
+    alertEl.innerHTML = `<div class="alert alert-error">⚠ ${error.message}</div>`;
+    return;
+  }
+  onLogin(data.user);
+}
+
+function onLogin(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('header-user').style.display = 'flex';
+  document.getElementById('user-email-display').textContent = user.email;
+  updateTurnoBanner();
+  addDest();
+  setInterval(updateTurnoBanner, 60000);
+}
+
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) onLogin(session.user);
+}
+checkSession();
+
+// ── TURNO ──────────────────────────────────────────────────────
+function getTurno() {
+  const now = new Date();
+  return (now.getHours() * 60 + now.getMinutes()) < 12 * 60 ? '11:30' : '15:30';
+}
+
+function updateTurnoBanner() {
+  const turno = getTurno();
+  const b = document.getElementById('turno-banner');
+  const l = document.getElementById('turno-label-form');
+  b.style.display = 'block';
+  b.innerHTML = `Turno attivo: <span>${turno}</span> — invio a <span>serena.bottalico@pde.it</span>`;
+  if (l) l.textContent = `Turno: ${turno}`;
+}
+
+// ── FORM ───────────────────────────────────────────────────────
+function addDest() {
+  const id = ++destIdCounter;
+  const wrap = document.createElement('div');
+  wrap.className = 'dest-block';
+  wrap.id = `dest-${id}`;
+  wrap.innerHTML = `
+  <div class="dest-block-head">
+    <span class="dest-block-head-label">DEST #${id}</span>
+    <button class="btn btn-danger" onclick="removeDest(${id})">✕ Rimuovi</button>
+  </div>
+  <div class="dest-block-body">
+    <div class="grid-2" style="margin-bottom:.7rem">
+      <div class="field">
+        <label>Cod. Cliente <span class="req">*</span></label>
+        <input type="text" id="cod-${id}" placeholder="es. 2643901" oninput="this.classList.remove('error')">
+      </div>
+      <div class="field">
+        <label>Data consegna desiderata</label>
+        <input type="date" id="data-${id}">
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:.7rem">
+      <div class="field">
+        <label>N. Ord. Cliente / Nota riga <small style="text-transform:none;letter-spacing:0">(max 30)</small></label>
+        <input type="text" id="nord-${id}" maxlength="30" placeholder="Nota opzionale">
+      </div>
+      <div class="field">
+        <label>Partita <small style="text-transform:none;letter-spacing:0">(vuoto = LIBERO)</small></label>
+        <input type="text" id="partita-${id}" placeholder="Lascia vuoto per LIBERO">
+      </div>
+    </div>
+
+    <div style="margin-bottom:.5rem">
+      <div style="font-size:.68rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">
+        Articoli <span class="req">*</span>
+      </div>
+      <div class="articoli-list" id="art-list-${id}"></div>
+      <button class="add-articolo-btn" onclick="addArticolo(${id})">＋ Aggiungi articolo</button>
+    </div>
+
+    <div style="margin-top:1rem">
+      <label class="toggle-dest-alt">
+        <input type="checkbox" id="chk-alt-${id}" onchange="toggleAlt(${id})">
+        Destinazione alternativa (diversa dal punto vendita)
+      </label>
+      <div id="alt-block-${id}" style="display:none">
+        <div class="dest-alt-block">
+          <div class="dest-alt-title">📦 Destinazione alternativa</div>
+          <div class="field grid-full" style="margin-bottom:.65rem">
+            <label>Ragione sociale <small style="text-transform:none;letter-spacing:0">(max 35)</small> <span class="req">*</span></label>
+            <input type="text" id="alt-rs-${id}" maxlength="35" placeholder="Nome azienda / evento">
+          </div>
+          <div class="field grid-full" style="margin-bottom:.65rem">
+            <label>Indirizzo <small style="text-transform:none;letter-spacing:0">(max 35)</small> <span class="req">*</span></label>
+            <input type="text" id="alt-ind-${id}" maxlength="35" placeholder="Via/Piazza, n.">
+          </div>
+          <div class="grid-3">
+            <div class="field">
+              <label>Località <span class="req">*</span></label>
+              <input type="text" id="alt-loc-${id}" placeholder="Città">
+            </div>
+            <div class="field">
+              <label>CAP <span class="req">*</span></label>
+              <input type="text" id="alt-cap-${id}" placeholder="00000" maxlength="5">
+            </div>
+            <div class="field">
+              <label>Provincia <span class="req">*</span></label>
+              <input type="text" id="alt-prov-${id}" placeholder="MI" maxlength="2" style="text-transform:uppercase">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('destinatari-container').appendChild(wrap);
+  updateDestCounter();
+  addArticolo(id);
+}
+
+function addArticolo(destId) {
+  if (!artCounters[destId]) artCounters[destId] = 0;
+  const aId = ++artCounters[destId];
+  const row = document.createElement('div');
+  row.className = 'articolo-row';
+  row.id = `art-${destId}-${aId}`;
+  row.innerHTML = `
+    <div class="field">
+      <label>EAN A13 <span class="req">*</span></label>
+      <input type="text" id="ean-${destId}-${aId}" placeholder="9788812345678" maxlength="13" oninput="this.classList.remove('error')">
+    </div>
+    <div class="field">
+      <label>Titolo / Nota</label>
+      <input type="text" id="titolo-${destId}-${aId}" placeholder="Opzionale">
+    </div>
+    <div class="field">
+      <label>Copie <span class="req">*</span></label>
+      <input type="number" id="copie-${destId}-${aId}" min="1" placeholder="≥16" oninput="checkCopie(this)">
+    </div>
+    <div class="field">
+      <label>Sconto occ.</label>
+      <input type="number" id="sconto-${destId}-${aId}" min="0" max="99" placeholder="%">
+    </div>
+    <button class="remove-row" onclick="removeArticolo(${destId},${aId})" title="Rimuovi">✕</button>`;
+  document.getElementById(`art-list-${destId}`).appendChild(row);
+}
+
+function checkCopie(el) {
+  el.classList.remove('error', 'copie-warn');
+  if (el.value > 0 && el.value < 16) el.classList.add('copie-warn');
+}
+
+function removeArticolo(destId, aId) {
+  const list = document.getElementById(`art-list-${destId}`);
+  if (list.children.length <= 1) return;
+  document.getElementById(`art-${destId}-${aId}`).remove();
+}
+
+function removeDest(id) {
+  if (document.querySelectorAll('.dest-block').length <= 1) return;
+  document.getElementById(`dest-${id}`).remove();
+  updateDestCounter();
+}
+
+function toggleAlt(id) {
+  document.getElementById(`alt-block-${id}`).style.display =
+    document.getElementById(`chk-alt-${id}`).checked ? 'block' : 'none';
+}
+
+function updateDestCounter() {
+  const n = document.querySelectorAll('.dest-block').length;
+  document.getElementById('dest-counter').textContent = `${n} destinatar${n===1?'io':'i'}`;
+}
+
+// ── RACCOLTA & VALIDAZIONE ─────────────────────────────────────
+function raccogliDati() {
+  let valid = true;
+  const destinatari = [];
+
+  document.querySelectorAll('.dest-block').forEach(block => {
+    const id = block.id.replace('dest-', '');
+    const cod = document.getElementById(`cod-${id}`).value.trim();
+    if (!cod) { document.getElementById(`cod-${id}`).classList.add('error'); valid = false; }
+
+    const articoli = [];
+    block.querySelectorAll('.articolo-row').forEach(row => {
+      const rid = row.id.replace(`art-${id}-`, '');
+      const ean   = document.getElementById(`ean-${destId(id)}-${rid}`)?.value?.trim() || document.getElementById(`ean-${id}-${rid}`)?.value?.trim() || '';
+      const copie = parseInt(document.getElementById(`copie-${id}-${rid}`).value) || 0;
+      const eanEl   = document.getElementById(`ean-${id}-${rid}`);
+      const copieEl = document.getElementById(`copie-${id}-${rid}`);
+      if (!ean)       { eanEl.classList.add('error'); valid = false; }
+      if (copie < 16) { copieEl.classList.add('error'); valid = false; }
+      articoli.push({
+        ean,
+        titolo: document.getElementById(`titolo-${id}-${rid}`)?.value?.trim() || '',
+        copie,
+        sconto: document.getElementById(`sconto-${id}-${rid}`)?.value || ''
+      });
+    });
+
+    const dest = {
+      cod_cliente: cod,
+      data_consegna: document.getElementById(`data-${id}`).value,
+      nord: document.getElementById(`nord-${id}`).value.trim(),
+      partita: document.getElementById(`partita-${id}`).value.trim(),
+      articoli,
+      dest_alternativa: null
+    };
+
+    if (document.getElementById(`chk-alt-${id}`).checked) {
+      const rs   = document.getElementById(`alt-rs-${id}`).value.trim();
+      const ind  = document.getElementById(`alt-ind-${id}`).value.trim();
+      const loc  = document.getElementById(`alt-loc-${id}`).value.trim();
+      const cap  = document.getElementById(`alt-cap-${id}`).value.trim();
+      const prov = document.getElementById(`alt-prov-${id}`).value.trim();
+      if (!rs||!ind||!loc||!cap||!prov) valid = false;
+      dest.dest_alternativa = { ragione_sociale: rs, indirizzo: ind, localita: loc, cap, provincia: prov.toUpperCase() };
+    }
+
+    destinatari.push(dest);
+  });
+
+  return { valid, destinatari };
+}
+
+function destId(id) { return id; } // alias leggibilità
+
+// ── INVIO ──────────────────────────────────────────────────────
+async function inviaRichiesta() {
+  const alertEl = document.getElementById('global-alert');
+  alertEl.innerHTML = '';
+
+  // Raccoglie manualmente per gestire le ean
+  let valid = true;
+  const destinatari = [];
+
+  document.querySelectorAll('.dest-block').forEach(block => {
+    const id = block.id.replace('dest-', '');
+    const cod = document.getElementById(`cod-${id}`).value.trim();
+    if (!cod) { document.getElementById(`cod-${id}`).classList.add('error'); valid = false; }
+
+    const articoli = [];
+    block.querySelectorAll('.articolo-row').forEach(row => {
+      const rid = row.id.split('-').pop();
+      const eanEl   = document.getElementById(`ean-${id}-${rid}`);
+      const copieEl = document.getElementById(`copie-${id}-${rid}`);
+      if (!eanEl || !copieEl) return;
+      const ean   = eanEl.value.trim();
+      const copie = parseInt(copieEl.value) || 0;
+      if (!ean)       { eanEl.classList.add('error'); valid = false; }
+      if (copie < 16) { copieEl.classList.add('error'); valid = false; }
+      articoli.push({
+        ean,
+        titolo: document.getElementById(`titolo-${id}-${rid}`)?.value?.trim() || '',
+        copie,
+        sconto: document.getElementById(`sconto-${id}-${rid}`)?.value || ''
+      });
+    });
+
+    const dest = {
+      cod_cliente: cod,
+      data_consegna: document.getElementById(`data-${id}`).value,
+      nord: document.getElementById(`nord-${id}`).value.trim(),
+      partita: document.getElementById(`partita-${id}`).value.trim(),
+      articoli, dest_alternativa: null
+    };
+
+    if (document.getElementById(`chk-alt-${id}`).checked) {
+      const rs   = document.getElementById(`alt-rs-${id}`).value.trim();
+      const ind  = document.getElementById(`alt-ind-${id}`).value.trim();
+      const loc  = document.getElementById(`alt-loc-${id}`).value.trim();
+      const cap  = document.getElementById(`alt-cap-${id}`).value.trim();
+      const prov = document.getElementById(`alt-prov-${id}`).value.trim();
+      if (!rs||!ind||!loc||!cap||!prov) { valid = false; }
+      dest.dest_alternativa = { ragione_sociale: rs, indirizzo: ind, localita: loc, cap, provincia: prov.toUpperCase() };
+    }
+    destinatari.push(dest);
+  });
+
+  if (!valid) {
+    alertEl.innerHTML = '<div class="alert alert-error">⚠ Verifica i campi obbligatori. Le copie devono essere ≥ 16.</div>';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.innerHTML = '<span class="spinner"></span> Invio…';
+  btn.disabled = true;
+
+  const { error } = await sb.from('ordini_urgenti').insert({
+    agente: currentUser.email,
+    turno: getTurno(),
+    data_richiesta: new Date().toISOString(),
+    destinatari
+  });
+
+  btn.innerHTML = 'Invia richiesta';
+  btn.disabled = false;
+
+  if (error) {
+    alertEl.innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;
+    return;
+  }
+
+  alertEl.innerHTML = '<div class="alert alert-success">✓ Richiesta inviata con successo!</div>';
+  resetForm();
+  setTimeout(() => { alertEl.innerHTML = ''; }, 4000);
+}
+
+// ── RESET ──────────────────────────────────────────────────────
+function resetForm() {
+  destIdCounter = 0;
+  artCounters = {};
+  document.getElementById('destinatari-container').innerHTML = '';
+  document.getElementById('global-alert').innerHTML = '';
+  addDest();
+  updateDestCounter();
+}
+
+// ── STORICO ────────────────────────────────────────────────────
+async function loadStorico() {
+  const list = document.getElementById('storico-list');
+  list.innerHTML = '<div class="alert alert-info">Caricamento…</div>';
+
+  const turno  = document.getElementById('filter-turno').value;
+  const data   = document.getElementById('filter-data').value;
+  const agente = document.getElementById('filter-agente').value.trim();
+
+  let q = sb.from('ordini_urgenti').select('*').order('data_richiesta', { ascending: false }).limit(100);
+  if (turno)  q = q.eq('turno', turno);
+  if (data)   q = q.gte('data_richiesta', data+'T00:00:00').lte('data_richiesta', data+'T23:59:59');
+  if (agente) q = q.ilike('agente', `%${agente}%`);
+
+  const { data: rows, error } = await q;
+
+  if (error) { list.innerHTML = `<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
+  if (!rows?.length) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>Nessuna richiesta trovata.</p></div>';
+    return;
+  }
+  list.innerHTML = rows.map(cardHTML).join('');
+}
+
+function cardHTML(r) {
+  const dt = new Date(r.data_richiesta);
+  const dStr = dt.toLocaleDateString('it-IT');
+  const oStr = dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  const tClass = r.turno === '11:30' ? 'tag-1130' : 'tag-1530';
+
+  const destsHTML = (r.destinatari||[]).map(d => {
+    const arts = (d.articoli||[]).map(a =>
+      `<tr><td>${a.ean}</td><td>${a.titolo||'—'}</td><td class="copie${a.copie<16?' copie-warn':''}">${a.copie}</td><td>${a.sconto||'—'}</td></tr>`
+    ).join('');
+    const altBadge = d.dest_alternativa ? '<span class="dest-alt-badge">📦 alt.</span>' : '';
+    const altInfo  = d.dest_alternativa
+      ? `<div style="font-size:.72rem;color:var(--testo-sub);margin:.2rem 0 .35rem">→ ${d.dest_alternativa.ragione_sociale}, ${d.dest_alternativa.indirizzo}, ${d.dest_alternativa.localita} ${d.dest_alternativa.cap} (${d.dest_alternativa.provincia})</div>` : '';
+    return `<div class="dest-row">
+      <div class="dest-row-head">
+        <span class="dest-cod">Cod. ${d.cod_cliente}</span>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          ${d.data_consegna?`<span style="font-size:.72rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}
+          ${altBadge}
+        </div>
+      </div>
+      ${altInfo}
+      <table class="art-table">
+        <thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead>
+        <tbody>${arts}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  const totArt = (r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);
+  return `<div class="richiesta-card">
+    <div class="richiesta-card-head">
+      <div class="richiesta-meta">
+        <span class="tag ${tClass}">${r.turno}</span>
+        <span class="tag tag-agent">${r.agente}</span>
+        <span class="tag-dt">${dStr} ${oStr}</span>
+      </div>
+      <span style="font-size:.72rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span>
+    </div>
+    <div class="richiesta-card-body">${destsHTML}</div>
+  </div>`;
+}
+
+// ── TABS ───────────────────────────────────────────────────────
+function showTab(name) {
+  document.getElementById('tab-nuova').style.display   = name==='nuova'   ? 'block' : 'none';
+  document.getElementById('tab-storico').style.display = name==='storico' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', (i===0&&name==='nuova')||(i===1&&name==='storico'))
+  );
+  if (name === 'storico') {
+    if (!document.getElementById('filter-data').value)
+      document.getElementById('filter-data').value = new Date().toISOString().slice(0,10);
+    loadStorico();
+  }
+}
+</script>
+</body>
+</html>
