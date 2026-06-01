@@ -105,7 +105,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .field select option{background:var(--bg-card);color:var(--testo);}
 
 .art-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.65rem;}
-.art-row{display:grid;grid-template-columns:1.4fr 2fr 75px 75px 24px;gap:.45rem;align-items:end;background:rgba(255,255,255,.03);border:1px solid var(--bordo);border-radius:7px;padding:.55rem .65rem;}
+.art-row{display:grid;grid-template-columns:1.4fr 1.6fr 70px 70px 70px 24px;gap:.45rem;align-items:end;background:rgba(255,255,255,.03);border:1px solid var(--bordo);border-radius:7px;padding:.55rem .65rem;}
 .art-row .field label{font-size:.62rem;}
 .del-art{background:none;border:none;cursor:pointer;color:var(--testo-sub);font-size:.95rem;padding:.18rem;border-radius:4px;transition:color .14s;margin-bottom:1px;}
 .del-art:hover{color:var(--rosso);}
@@ -568,6 +568,7 @@ async function startEdit(id) {
       document.getElementById(`titolo-${did}-${aid}`).value=art.titolo||'';
       document.getElementById(`copie-${did}-${aid}`).value=art.copie||'';
       document.getElementById(`sconto-${did}-${aid}`).value=art.sconto||'';
+      document.getElementById(`pag-${did}-${aid}`).value=art.pag||'';
     }
     // Dest alternativa
     if(dest.dest_alternativa) {
@@ -594,7 +595,7 @@ function cancelEdit() {
   document.getElementById('form-title').textContent='Nuova richiesta';
   document.getElementById('edit-banner').style.display='none';
   document.getElementById('submit-btn').className='btn btn-accent';
-  document.getElementById('submit-btn').textContent='Invia richiesta';
+  document.getElementById('submit-btn').textContent='Inserisci richiesta';
   resetForm();
 }
 
@@ -656,6 +657,7 @@ function addArticoloRaw(destId, aId) {
     <div class="field"><label>Titolo / Nota</label><input type="text" id="titolo-${destId}-${aId}" placeholder="Opzionale"></div>
     <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="copie-${destId}-${aId}" min="1" placeholder="≥15" oninput="checkCopie(this)"></div>
     <div class="field"><label>Sconto occ.</label><input type="number" id="sconto-${destId}-${aId}" min="0" max="99" placeholder="%"></div>
+    <div class="field"><label>Pag. occ.</label><input type="number" id="pag-${destId}-${aId}" min="0" max="999" placeholder="gg"></div>
     <button class="del-art" onclick="removeArticolo(${destId},${aId})" title="Rimuovi">✕</button>`;
   document.getElementById(`art-list-${destId}`).appendChild(row);
 }
@@ -695,7 +697,7 @@ function raccogliDestinatari() {
       if(!ean){eanEl.classList.add('err');valid=false;}
       if(!copie){copieEl.classList.add('err');valid=false;}
       if(copie>0&&copie<15) warnings++;
-      articoli.push({ean,titolo:document.getElementById(`titolo-${id}-${rid}`)?.value?.trim()||'',copie,sconto:document.getElementById(`sconto-${id}-${rid}`)?.value||''});
+      articoli.push({ean,titolo:document.getElementById(`titolo-${id}-${rid}`)?.value?.trim()||'',copie,sconto:document.getElementById(`sconto-${id}-${rid}`)?.value||'',pag:document.getElementById(`pag-${id}-${rid}`)?.value||''});
     });
     const dest={cod_cliente:cod,data_consegna:document.getElementById(`data-${id}`).value,nord:document.getElementById(`nord-${id}`).value.trim(),partita:document.getElementById(`partita-${id}`).value.trim(),articoli,dest_alternativa:null};
     if(document.getElementById(`chk-alt-${id}`).checked){
@@ -735,7 +737,7 @@ async function inviaRichiesta() {
     error=res.error;
   }
 
-  btn.innerHTML=isEdit?'💾 Salva modifiche':'Invia richiesta';
+  btn.innerHTML=isEdit?'💾 Salva modifiche':'Inserisci richiesta';
   btn.disabled=false;
 
   if(error){alertEl.innerHTML=`<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;return;}
@@ -780,10 +782,10 @@ async function loadStorico(){
     const tc=turnoClass(r.turno);
     const expTag=r.esportato?`<span class="tag tag-exp">✓ esportato</span>`:'';
     const destsHTML=(r.destinatari||[]).map(d=>{
-      const arts=(d.articoli||[]).map(a=>`<tr><td>${a.ean}</td><td>${a.titolo||'—'}</td><td class="cp">${a.copie}</td><td>${a.sconto||'—'}</td></tr>`).join('');
+      const arts=(d.articoli||[]).map(a=>`<tr><td>${a.ean}</td><td>${a.titolo||'—'}</td><td class="cp">${a.copie}</td><td>${a.sconto||'—'}</td><td>${a.pag||'—'}</td></tr>`).join('');
       const altB=d.dest_alternativa?'<span class="alt-badge">📦 alt.</span>':'';
       const altI=d.dest_alternativa?`<div style="font-size:.7rem;color:var(--testo-sub);margin:.18rem 0 .3rem">→ ${d.dest_alternativa.ragione_sociale}, ${d.dest_alternativa.indirizzo}, ${d.dest_alternativa.localita} ${d.dest_alternativa.cap} (${d.dest_alternativa.provincia})</div>`:'';
-      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span><div style="display:flex;gap:.35rem;align-items:center">${d.data_consegna?`<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}${altB}</div></div>${altI}<table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead><tbody>${arts}</tbody></table></div>`;
+      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span><div style="display:flex;gap:.35rem;align-items:center">${d.data_consegna?`<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}${altB}</div></div>${altI}<table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th><th>Pag.</th></tr></thead><tbody>${arts}</tbody></table></div>`;
     }).join('');
     const totArt=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);
     return `<div class="ric-card"><div class="ric-head"><div class="ric-meta"><span class="tag ${tc}">${r.turno}</span><span class="tag tag-ag">${r.agente}</span><span class="tag-dt">${dStr} ${oStr}</span>${expTag}</div><span style="font-size:.7rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span></div><div class="ric-body">${destsHTML}</div></div>`;
@@ -841,7 +843,7 @@ async function loadEsporta(){
       (d.articoli||[]).forEach(a=>{
         let dc='';
         if(d.data_consegna){const p=d.data_consegna.split('-');if(p.length===3)dc=p[2]+p[1]+p[0];}
-        esportaRows.push({cod:d.cod_cliente,ean:a.ean,copie:a.copie,sconto:a.sconto||'',pag:'',nord:d.nord||'',data_cons:dc,partita:d.partita||'',alt_rs:d.dest_alternativa?.ragione_sociale||'',alt_ind:d.dest_alternativa?.indirizzo||'',alt_loc:d.dest_alternativa?.localita||'',alt_cap:d.dest_alternativa?.cap||'',alt_prov:d.dest_alternativa?.provincia||'',agente:r.agente,titolo:a.titolo||''});
+        esportaRows.push({cod:d.cod_cliente,ean:a.ean,copie:a.copie,sconto:a.sconto||'',pag:a.pag||'',nord:d.nord||'',data_cons:dc,partita:d.partita||'',alt_rs:d.dest_alternativa?.ragione_sociale||'',alt_ind:d.dest_alternativa?.indirizzo||'',alt_loc:d.dest_alternativa?.localita||'',alt_cap:d.dest_alternativa?.cap||'',alt_prov:d.dest_alternativa?.provincia||'',agente:r.agente,titolo:a.titolo||''});
       });
     });
   });
@@ -986,6 +988,7 @@ function addSospArticolo(destId) {
     <div class="field"><label>Titolo / Nota</label><input type="text" id="sosp-titolo-${destId}-${aId}" placeholder="Opzionale"></div>
     <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="sosp-copie-${destId}-${aId}" min="1" placeholder="≥15"></div>
     <div class="field"><label>Sconto occ.</label><input type="number" id="sosp-sconto-${destId}-${aId}" min="0" max="99" placeholder="%"></div>
+    <div class="field"><label>Pag. occ.</label><input type="number" id="sosp-pag-${destId}-${aId}" min="0" max="999" placeholder="gg"></div>
     <button class="del-art" onclick="removeSospArt(${destId},${aId})">✕</button>`;
   document.getElementById(`sosp-art-list-${destId}`).appendChild(row);
 }
@@ -1017,7 +1020,7 @@ function raccogliSospDestinatari() {
       const ean = eanEl.value.trim(), copie = parseInt(copieEl.value) || 0;
       if (!ean) { eanEl.classList.add('err'); valid = false; }
       if (!copie) { copieEl.classList.add('err'); valid = false; }
-      articoli.push({ ean, titolo: document.getElementById(`sosp-titolo-${id}-${rid}`)?.value?.trim() || '', copie, sconto: document.getElementById(`sosp-sconto-${id}-${rid}`)?.value || '' });
+      articoli.push({ ean, titolo: document.getElementById(`sosp-titolo-${id}-${rid}`)?.value?.trim() || '', copie, sconto: document.getElementById(`sosp-sconto-${id}-${rid}`)?.value || '', pag: document.getElementById(`sosp-pag-${id}-${rid}`)?.value || '' });
     });
     const dest = { cod_cliente: cod, data_consegna: document.getElementById(`sosp-data-${id}`).value, nord: document.getElementById(`sosp-nord-${id}`).value.trim(), partita: document.getElementById(`sosp-partita-${id}`).value.trim(), articoli, dest_alternativa: null };
     if (document.getElementById(`sosp-chk-alt-${id}`).checked) {
@@ -1060,8 +1063,8 @@ async function loadSospesi() {
     const dt = new Date(r.data_creazione);
     const dStr = dt.toLocaleDateString('it-IT'), oStr = dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     const destsHTML = (r.destinatari || []).map(d => {
-      const arts = (d.articoli || []).map(a => `<tr><td>${a.ean}</td><td>${a.titolo || '—'}</td><td class="cp">${a.copie}</td><td>${a.sconto || '—'}</td></tr>`).join('');
-      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span>${d.data_consegna ? `<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>` : ''}</div><table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead><tbody>${arts}</tbody></table></div>`;
+      const arts = (d.articoli || []).map(a => `<tr><td>${a.ean}</td><td>${a.titolo || '—'}</td><td class="cp">${a.copie}</td><td>${a.sconto || '—'}</td><td>${a.pag || '—'}</td></tr>`).join('');
+      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span>${d.data_consegna ? `<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>` : ''}</div><table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th><th>Pag.</th></tr></thead><tbody>${arts}</tbody></table></div>`;
     }).join('');
     const notaHTML = r.nota ? `<div class="sosp-nota">📌 ${r.nota}</div>` : '';
     return `<div class="sosp-card">
