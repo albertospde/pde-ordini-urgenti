@@ -4,7 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ordini Urgenti — PDE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+// ── CANCELLA RICHIESTA ────────────────────────────────────────
+async function cancellaRichiesta(id) {
+  if (!confirm('Sei sicuro di voler cancellare questa richiesta? L\'operazione non può essere annullata.')) return;
+  const { error } = await sb.from('ordini_urgenti').delete().eq('id', id).eq('agente', currentUser.email);
+  if (error) {
+    document.getElementById('global-alert').innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;
+    return;
+  }
+  document.getElementById('global-alert').innerHTML = '<div class="alert alert-success">✓ Richiesta cancellata.</div>';
+  loadBozze();
+  setTimeout(() => { document.getElementById('global-alert').innerHTML = ''; }, 3000);
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('header-user').style.display = 'none';
+  document.getElementById('admin-badge').style.display = 'none';
+  document.getElementById('turno-banner').style.display = 'none';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  currentUser = null; isAdmin = false;
+  destIdCounter = 0; artCounters = {};
+  sospDestCounter = 0; sospArtCounters = {};
+  if (bozzeInterval) clearInterval(bozzeInterval);
+}
+
+</script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -31,6 +62,8 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .hright{display:flex;align-items:center;gap:.7rem;}
 .huser{display:flex;align-items:center;gap:.45rem;color:var(--testo-dim);font-size:.78rem;}
 .udot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);}
+.btn-logout{background:none;border:1px solid rgba(255,255,255,.12);color:var(--testo-sub);font-size:.75rem;font-weight:600;padding:.28rem .7rem;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .14s;}
+.btn-logout:hover{border-color:var(--rosso);color:var(--rosso);background:rgba(255,58,94,.08);}
 .abadge{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,180,232,.15);color:var(--azzurro);border:1px solid var(--bordo-az);padding:.12rem .45rem;border-radius:20px;}
 
 .turno-bar{background:linear-gradient(90deg,var(--blu),var(--blu-light));border-bottom:1px solid var(--bordo-az);color:rgba(255,255,255,.8);text-align:center;padding:.45rem 1rem;font-size:.76rem;font-weight:500;}
@@ -256,6 +289,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
     <div class="huser" id="header-user" style="display:none">
       <div class="udot"></div><span id="user-email-display"></span>
     </div>
+    <button class="btn-logout" onclick="doLogout()" title="Esci">⏻ Esci</button>
   </div>
 </header>
 
@@ -527,7 +561,7 @@ async function loadBozze() {
       const arts=(d.articoli||[]).map(a=>`<span>${a.ean}</span> ×${a.copie}`).join(' · ');
       return `<div style="margin-bottom:.22rem"><span class="bozza-cod">Cod. ${d.cod_cliente}</span> <span class="bozza-arts">— ${arts}</span></div>`;
     }).join('');
-    const editBtn = isMe ? `<button class="btn-edit" onclick="startEdit('${r.id}')">✏ Modifica</button>` : '';
+    const editBtn = isMe ? `<button class="btn-edit" onclick="startEdit('${r.id}')">✏ Modifica</button><button class="btn-edit" style="margin-left:.3rem;background:rgba(255,58,94,.1);color:var(--rosso);border-color:rgba(255,58,94,.3)" onclick="cancellaRichiesta('${r.id}')">✕ Cancella</button>` : '';
     return `<div class="bozza-card">
       <div class="bozza-head">
         <span class="bozza-agente">${isMe?'👤 Tu':r.agente}</span>
