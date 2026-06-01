@@ -386,7 +386,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
           <span class="fcard-foot-info">Verrà salvato come sospeso</span>
           <div style="display:flex;gap:.5rem">
             <button class="btn btn-ghost" onclick="resetSospForm()">Azzera</button>
-            <button class="btn" style="background:rgba(245,166,35,.2);color:var(--warn);border:1px solid rgba(245,166,35,.3)" onclick="salvaSospeso()">⏸ Salva come sospeso</button>
+            <button class="btn" style="background:rgba(245,166,35,.2);color:var(--warn);border:1px solid rgba(245,166,35,.3)" onclick="salvaSospeso()">Salva come sospeso</button>
           </div>
         </div>
       </div>
@@ -1075,7 +1075,7 @@ async function loadSospesi() {
           <span class="tag-dt">${dStr} ${oStr}</span>
         </div>
         <div style="display:flex;gap:.4rem">
-          <button class="btn-trasferisci" onclick="trasferisciSospeso('${r.id}')">▶ Trasferisci al turno</button>
+          <button class="btn-trasferisci" onclick="trasferisciSospeso('${r.id}')">Trasferisci negli invii</button>
           <button class="btn-del-sosp" onclick="eliminaSospeso('${r.id}')">✕</button>
         </div>
       </div>
