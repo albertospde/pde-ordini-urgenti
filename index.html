@@ -21,7 +21,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--testo);mi
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 10% 0%,rgba(26,45,107,.45) 0%,transparent 70%),radial-gradient(ellipse 40% 30% at 90% 100%,rgba(0,180,232,.08) 0%,transparent 60%);pointer-events:none;z-index:0;}
 .z1{position:relative;z-index:1;}
 
-/* HEADER */
 header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--bordo);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;}
 .hbrand{display:flex;align-items:center;gap:.6rem;}
 .hlogo{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:#fff;letter-spacing:.12em;}
@@ -33,13 +32,11 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .udot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);}
 .abadge{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(0,180,232,.15);color:var(--azzurro);border:1px solid var(--bordo-az);padding:.12rem .45rem;border-radius:20px;}
 
-/* TURNO */
 .turno-bar{background:linear-gradient(90deg,var(--blu),var(--blu-light));border-bottom:1px solid var(--bordo-az);color:rgba(255,255,255,.8);text-align:center;padding:.45rem 1rem;font-size:.76rem;font-weight:500;}
 .turno-bar span{font-family:'DM Mono',monospace;color:var(--azzurro);}
 
 .container{max-width:860px;margin:0 auto;padding:1.8rem 1.5rem 5rem;position:relative;z-index:1;}
 
-/* AUTH */
 #auth-screen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 56px);position:relative;z-index:1;}
 .auth-card{background:var(--bg-card);border:1px solid var(--bordo);border-radius:14px;padding:2.5rem 2rem;width:100%;max-width:350px;box-shadow:0 24px 64px rgba(0,0,0,.5);text-align:center;}
 .auth-logo{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:500;color:#fff;letter-spacing:.18em;margin-bottom:.25rem;}
@@ -48,28 +45,28 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .auth-card input:focus{border-color:var(--azzurro);}
 .auth-card input::placeholder{color:var(--testo-sub);}
 
-/* TABS */
 .tabs{display:flex;gap:.25rem;background:rgba(255,255,255,.04);border:1px solid var(--bordo);border-radius:10px;padding:.28rem;margin-bottom:1.6rem;}
 .tab-btn{flex:1;padding:.5rem;border:none;border-radius:7px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .16s;background:transparent;color:var(--testo-dim);}
 .tab-btn.active{background:var(--blu-light);color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.3);}
 
-/* SECTION HEAD */
 .sec-head{margin-bottom:1.3rem;}
 .sec-head h1{font-size:1.25rem;font-weight:600;color:#fff;}
 .sec-head p{color:var(--testo-dim);font-size:.8rem;margin-top:.2rem;}
 
-/* BTN */
 .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:8px;font-family:inherit;font-size:.83rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
 .btn-primary{background:var(--azzurro);color:#fff;width:100%;justify-content:center;}
 .btn-primary:hover{background:#02c5ff;box-shadow:0 0 16px rgba(0,180,232,.3);}
 .btn-accent{background:var(--azzurro);color:#fff;}
-.btn-accent:hover{background:#02c5ff;box-shadow:0 0 14px rgba(0,180,232,.25);}
+.btn-accent:hover{background:#02c5ff;}
+.btn-save{background:var(--success);color:#fff;}
+.btn-save:hover{background:#00f0a0;}
 .btn-success{background:var(--success);color:#fff;}
-.btn-success:hover{background:#00f0a0;box-shadow:0 0 14px rgba(0,212,140,.25);}
+.btn-success:hover{background:#00f0a0;}
 .btn-ghost{background:transparent;color:var(--testo-dim);border:1px solid var(--bordo);font-size:.8rem;padding:.36rem .8rem;}
 .btn-ghost:hover{border-color:var(--azzurro);color:var(--azzurro);}
+.btn-edit{background:rgba(0,180,232,.12);color:var(--azzurro);border:1px solid var(--bordo-az);font-size:.75rem;padding:.28rem .7rem;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .14s;}
+.btn-edit:hover{background:rgba(0,180,232,.22);}
 
-/* FORM CARD */
 .form-card{background:var(--bg-card);border:1px solid var(--bordo);border-radius:12px;overflow:hidden;margin-bottom:1.3rem;box-shadow:0 4px 24px rgba(0,0,0,.28);}
 .fcard-head{background:rgba(26,45,107,.55);border-bottom:1px solid var(--bordo);padding:.8rem 1.3rem;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:.86rem;color:#fff;}
 .fcard-head .cnt{font-family:'DM Mono',monospace;font-size:.7rem;background:var(--azzurro-dim);color:var(--azzurro);padding:.12rem .5rem;border-radius:20px;}
@@ -77,20 +74,22 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .fcard-foot{padding:.8rem 1.2rem 1.2rem;border-top:1px solid var(--bordo);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
 .fcard-foot-info{font-size:.75rem;color:var(--testo-sub);font-family:'DM Mono',monospace;}
 
-/* DEST BLOCK */
+/* edit mode banner */
+.edit-banner{background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:8px;padding:.6rem 1rem;margin-bottom:1rem;font-size:.82rem;color:var(--warn);display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.edit-banner button{background:none;border:1px solid rgba(245,166,35,.3);color:var(--warn);border-radius:6px;padding:.22rem .6rem;font-size:.75rem;cursor:pointer;font-family:inherit;font-weight:600;}
+.edit-banner button:hover{background:rgba(245,166,35,.15);}
+
 .dest-block{border:1px solid var(--bordo);border-radius:10px;margin-bottom:.9rem;overflow:hidden;background:var(--bg-dest);}
 .dhead{background:rgba(26,45,107,.3);border-bottom:1px solid var(--bordo);padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;}
 .dhead-lbl{font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;color:var(--azzurro);letter-spacing:.08em;}
-.dhead-del{background:none;border:none;cursor:pointer;color:var(--testo-sub);font-size:.9rem;padding:.25rem .5rem;border-radius:5px;transition:all .14s;font-family:inherit;font-size:.75rem;font-weight:600;}
+.dhead-del{background:none;border:none;cursor:pointer;color:var(--testo-sub);font-size:.75rem;font-weight:600;padding:.25rem .5rem;border-radius:5px;transition:all .14s;font-family:inherit;}
 .dhead-del:hover{color:var(--rosso);background:rgba(255,58,94,.1);}
 .dbody{padding:.9rem;}
 
-/* GRID */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
 .gfull{grid-column:1/-1;}
 
-/* FIELDS */
 .field{display:flex;flex-direction:column;gap:.28rem;}
 .field label{font-size:.68rem;font-weight:600;color:var(--testo-sub);letter-spacing:.07em;text-transform:uppercase;}
 .field label .req{color:var(--azzurro);margin-left:.1rem;}
@@ -98,13 +97,12 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .field input::placeholder{color:var(--testo-sub);}
 .field input:focus,.field select:focus{border-color:var(--azzurro);box-shadow:0 0 0 3px rgba(0,180,232,.1);}
 .field input.err{border-color:var(--rosso);box-shadow:0 0 0 3px rgba(255,58,94,.1);}
-/* Calendar icon visible */
+.field input.warn-inp{border-color:var(--warn);}
 .field input[type="date"]{color-scheme:dark;cursor:pointer;}
 .field input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.6) sepia(1) saturate(3) hue-rotate(170deg);cursor:pointer;opacity:.8;}
 .field input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:1;}
 .field select option{background:var(--bg-card);color:var(--testo);}
 
-/* ARTICOLI */
 .art-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.65rem;}
 .art-row{display:grid;grid-template-columns:1.4fr 2fr 75px 75px 24px;gap:.45rem;align-items:end;background:rgba(255,255,255,.03);border:1px solid var(--bordo);border-radius:7px;padding:.55rem .65rem;}
 .art-row .field label{font-size:.62rem;}
@@ -113,35 +111,32 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .add-art-btn{background:none;border:1px dashed rgba(255,255,255,.13);border-radius:7px;padding:.45rem;width:100%;text-align:center;cursor:pointer;font-family:inherit;font-size:.78rem;color:var(--testo-sub);transition:all .15s;font-weight:500;}
 .add-art-btn:hover{border-color:var(--azzurro);color:var(--azzurro);background:var(--azzurro-glow);}
 
-/* DEST ALT */
 .tog-alt{display:flex;align-items:center;gap:.45rem;cursor:pointer;font-size:.78rem;font-weight:500;color:var(--testo-dim);margin-bottom:.6rem;user-select:none;}
 .tog-alt input[type="checkbox"]{accent-color:var(--azzurro);width:13px;height:13px;cursor:pointer;}
 .alt-block{background:rgba(0,180,232,.04);border:1px solid var(--bordo-az);border-radius:8px;padding:.9rem;margin-top:.35rem;margin-bottom:.6rem;}
 .alt-title{font-size:.68rem;font-weight:700;color:var(--azzurro);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem;}
 
-/* ADD DEST */
 .add-dest-btn{background:none;border:1.5px dashed rgba(0,180,232,.28);border-radius:10px;padding:.7rem;width:100%;text-align:center;cursor:pointer;font-family:inherit;font-size:.81rem;font-weight:600;color:var(--testo-dim);transition:all .15s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
 .add-dest-btn:hover{border-color:var(--azzurro);color:var(--azzurro);background:var(--azzurro-glow);}
 
-/* BOZZE LIVE */
+/* BOZZE */
 .bozze-section{margin-top:1.5rem;}
 .bozze-title{font-size:.72rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;}
-.bozze-title .cnt-boz{font-family:'DM Mono',monospace;background:rgba(245,166,35,.15);color:var(--warn);border:1px solid rgba(245,166,35,.25);padding:.1rem .4rem;border-radius:20px;font-size:.65rem;}
+.cnt-boz{font-family:'DM Mono',monospace;background:rgba(245,166,35,.15);color:var(--warn);border:1px solid rgba(245,166,35,.25);padding:.1rem .4rem;border-radius:20px;font-size:.65rem;}
 .bozza-card{background:rgba(255,255,255,.025);border:1px solid var(--bordo);border-radius:8px;padding:.7rem .9rem;margin-bottom:.5rem;}
 .bozza-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;flex-wrap:wrap;gap:.4rem;}
-.bozza-agente{font-size:.72rem;color:var(--testo-dim);font-style:italic;}
+.bozza-agente{font-size:.72rem;color:var(--testo-dim);}
 .bozza-cod{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--azzurro);font-weight:500;}
 .bozza-arts{font-size:.75rem;color:var(--testo-sub);}
-.bozza-arts span{color:var(--testo-dim);font-family:'DM Mono',monospace;}
 .bozza-ts{font-size:.68rem;color:var(--testo-sub);font-family:'DM Mono',monospace;}
+.bozza-actions{display:flex;align-items:center;gap:.4rem;}
 
-/* ALERT */
 .alert{padding:.65rem .95rem;border-radius:8px;font-size:.81rem;font-weight:500;margin-bottom:.85rem;display:flex;align-items:center;gap:.6rem;}
 .alert-error{background:rgba(255,58,94,.12);color:#ff8fa3;border:1px solid rgba(255,58,94,.25);}
 .alert-success{background:rgba(0,212,140,.1);color:var(--success);border:1px solid rgba(0,212,140,.25);}
 .alert-info{background:var(--azzurro-glow);color:var(--azzurro);border:1px solid var(--bordo-az);}
+.alert-warn{background:rgba(245,166,35,.1);color:var(--warn);border:1px solid rgba(245,166,35,.25);}
 
-/* STORICO */
 .storico-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
 .storico-head h2{font-size:1.1rem;font-weight:600;color:#fff;}
 .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center;}
@@ -154,26 +149,26 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .ric-card{background:var(--bg-card);border:1px solid var(--bordo);border-radius:10px;margin-bottom:.75rem;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.22);}
 .ric-head{padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;background:rgba(26,45,107,.3);border-bottom:1px solid var(--bordo);gap:.5rem;flex-wrap:wrap;}
 .ric-meta{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;}
-.tag{font-size:.62rem;font-weight:700;padding:.13rem .48rem;border-radius:20px;letter-spacing:.06em;text-transform:uppercase;}
-.tag-1130{background:rgba(245,166,35,.15);color:var(--warn);border:1px solid rgba(245,166,35,.3);}
-.tag-1530{background:var(--azzurro-dim);color:var(--azzurro);border:1px solid var(--bordo-az);}
-.tag-ag{background:rgba(0,212,140,.1);color:var(--success);border:1px solid rgba(0,212,140,.2);}
+.tag{font-size:.62rem;font-weight:700;padding:.13rem .48rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
+.tag-primo{background:rgba(0,212,140,.12);color:var(--success);border:1px solid rgba(0,212,140,.2);}
+.tag-secondo{background:var(--azzurro-dim);color:var(--azzurro);border:1px solid var(--bordo-az);}
+.tag-extra{background:rgba(245,166,35,.15);color:var(--warn);border:1px solid rgba(245,166,35,.3);}
+.tag-ag{background:rgba(255,255,255,.08);color:var(--testo-dim);border:1px solid var(--bordo);}
 .tag-dt{font-size:.72rem;color:var(--testo-sub);font-family:'DM Mono',monospace;}
+.tag-exp{background:rgba(0,212,140,.1);color:var(--success);border:1px solid rgba(0,212,140,.2);font-size:.6rem;}
 .ric-body{padding:.75rem 1rem;}
 .dst-row{border:1px solid var(--bordo);border-radius:7px;padding:.55rem .85rem;margin-bottom:.5rem;background:rgba(255,255,255,.02);}
 .dst-row:last-child{margin-bottom:0;}
 .dst-rhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;flex-wrap:wrap;gap:.35rem;}
 .dst-cod{font-family:'DM Mono',monospace;font-weight:500;font-size:.8rem;color:#fff;}
-.alt-badge{font-size:.6rem;font-weight:700;background:var(--azzurro-dim);color:var(--azzurro);border:1px solid var(--bordo-az);padding:.08rem .42rem;border-radius:20px;text-transform:uppercase;letter-spacing:.07em;}
+.alt-badge{font-size:.6rem;font-weight:700;background:var(--azzurro-dim);color:var(--azzurro);border:1px solid var(--bordo-az);padding:.08rem .42rem;border-radius:20px;text-transform:uppercase;}
 .art-tbl{width:100%;font-size:.76rem;border-collapse:collapse;}
 .art-tbl th{text-align:left;font-size:.62rem;color:var(--testo-sub);font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .38rem .25rem;border-bottom:1px solid var(--bordo);}
 .art-tbl td{padding:.2rem .38rem;font-family:'DM Mono',monospace;color:var(--testo-dim);}
 .art-tbl td.cp{font-weight:700;color:var(--testo);}
-.cp-warn{color:var(--warn)!important;}
 
-/* ESPORTA */
 .exp-card{background:var(--bg-card);border:1px solid var(--bordo);border-radius:12px;overflow:hidden;}
-.exp-head{background:rgba(26,45,107,.55);border-bottom:1px solid var(--bordo);padding:.8rem 1.3rem;font-weight:600;font-size:.86rem;color:#fff;}
+.exp-head-bar{background:rgba(26,45,107,.55);border-bottom:1px solid var(--bordo);padding:.8rem 1.3rem;font-weight:600;font-size:.86rem;color:#fff;}
 .exp-body{padding:1.2rem;}
 .riep-tbl{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:1.1rem;}
 .riep-tbl th{text-align:left;font-size:.65rem;color:var(--testo-sub);font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.28rem .55rem;border-bottom:1px solid var(--bordo);}
@@ -182,60 +177,50 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .cnt-badge{font-family:'DM Mono',monospace;font-size:.7rem;background:var(--azzurro-dim);color:var(--azzurro);padding:.1rem .42rem;border-radius:20px;}
 .exp-actions{display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;padding-top:.75rem;border-top:1px solid var(--bordo);}
 
-/* LIVELLI */
 .liv-search{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;}
 .liv-search input,.liv-search select{padding:.42rem .8rem;background:var(--bg-card);border:1px solid var(--bordo);border-radius:7px;font-family:inherit;font-size:.8rem;color:var(--testo);outline:none;}
 .liv-search input:focus,.liv-search select:focus{border-color:var(--azzurro);}
 .liv-search select option{background:var(--bg-card);}
-.liv-tbl-wrap{overflow-x:auto;}
+.liv-tbl-wrap{overflow-x:auto;padding:0 1.2rem 1.2rem;}
 .liv-tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
 .liv-tbl th{text-align:left;font-size:.65rem;color:var(--testo-sub);font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.3rem .6rem;border-bottom:1px solid var(--bordo);white-space:nowrap;}
 .liv-tbl td{padding:.45rem .6rem;border-bottom:1px solid rgba(255,255,255,.04);color:var(--testo-dim);}
 .liv-tbl td:first-child{font-family:'DM Mono',monospace;font-weight:600;color:var(--azzurro);}
 .liv-tbl tr:hover td{background:rgba(255,255,255,.025);}
-.giorni-pill{display:inline-block;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:700;padding:.1rem .45rem;border-radius:20px;min-width:28px;text-align:center;}
-.g1,.g2pill{background:rgba(0,212,140,.12);color:var(--success);border:1px solid rgba(0,212,140,.2);}
-.g3pill{background:rgba(0,180,232,.12);color:var(--azzurro);border:1px solid var(--bordo-az);}
-.g4pill{background:rgba(245,166,35,.12);color:var(--warn);border:1px solid rgba(245,166,35,.2);}
-.g5pill{background:rgba(255,58,94,.12);color:var(--rosso);border:1px solid rgba(255,58,94,.2);}
+.gpill{display:inline-block;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:700;padding:.1rem .45rem;border-radius:20px;min-width:28px;text-align:center;}
+.g2p{background:rgba(0,212,140,.12);color:var(--success);border:1px solid rgba(0,212,140,.2);}
+.g3p{background:rgba(0,180,232,.12);color:var(--azzurro);border:1px solid var(--bordo-az);}
+.g4p{background:rgba(245,166,35,.12);color:var(--warn);border:1px solid rgba(245,166,35,.2);}
+.g5p{background:rgba(255,58,94,.12);color:var(--rosso);border:1px solid rgba(255,58,94,.2);}
 .note-pill{font-size:.68rem;background:rgba(245,166,35,.1);color:var(--warn);border:1px solid rgba(245,166,35,.2);padding:.1rem .4rem;border-radius:4px;}
 
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--testo-sub);}
 .empty-state .icon{font-size:2rem;margin-bottom:.5rem;opacity:.4;}
 .empty-state p{font-size:.86rem;}
-
 .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-.copie-warn-inp{border-color:var(--warn)!important;}
-
-@media(max-width:600px){
-  .g2,.g3{grid-template-columns:1fr;}
-  .art-row{grid-template-columns:1fr 1fr;}
-}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr;}.art-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="hbrand">
-    <span class="hlogo">PDE</span>
-    <div class="hsep"></div>
+    <span class="hlogo">PDE</span><div class="hsep"></div>
     <span class="htitle">Ordini Urgenti</span>
     <span class="hbadge">live</span>
   </div>
   <div class="hright">
     <span class="abadge" id="admin-badge" style="display:none">Admin</span>
     <div class="huser" id="header-user" style="display:none">
-      <div class="udot"></div>
-      <span id="user-email-display"></span>
+      <div class="udot"></div><span id="user-email-display"></span>
     </div>
   </div>
 </header>
 
 <div id="turno-banner" class="turno-bar z1" style="display:none"></div>
 
-<!-- AUTH -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">PDE</div>
@@ -247,7 +232,6 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" style="display:none">
   <div class="container">
     <div class="tabs" id="main-tabs">
@@ -257,11 +241,15 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
       <button class="tab-btn" id="tab-exp-btn" style="display:none" onclick="showTab('esporta')">⬇ Esporta Excel</button>
     </div>
 
-    <!-- NUOVA -->
+    <!-- NUOVA / EDIT -->
     <div id="tab-nuova">
       <div class="sec-head">
-        <h1>Richiesta ordini urgenti</h1>
-        <p>Compila i destinatari. Le bozze in attesa di invio appaiono qui sotto in tempo reale.</p>
+        <h1 id="form-title">Nuova richiesta</h1>
+        <p>Compila i destinatari. Le richieste del turno corrente appaiono qui sotto in tempo reale.</p>
+      </div>
+      <div id="edit-banner" style="display:none" class="edit-banner">
+        <span>✏️ Stai modificando una richiesta esistente</span>
+        <button onclick="cancelEdit()">✕ Annulla modifica</button>
       </div>
       <div id="global-alert"></div>
       <div class="form-card">
@@ -277,15 +265,14 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
           <span class="fcard-foot-info" id="turno-label-form"></span>
           <div style="display:flex;gap:.5rem;align-items:center">
             <button class="btn btn-ghost" onclick="resetForm()">Azzera</button>
-            <button class="btn btn-accent" onclick="inviaRichiesta()" id="submit-btn">Invia richiesta</button>
+            <button class="btn btn-accent" onclick="inviaRichiesta()" id="submit-btn">Salva richiesta</button>
           </div>
         </div>
       </div>
 
-      <!-- BOZZE IN ATTESA (richieste non ancora inviate degli altri) -->
       <div class="bozze-section" id="bozze-section" style="display:none">
         <div class="bozze-title">
-          Richieste in attesa di questo turno
+          Richieste inviate questo turno
           <span class="cnt-boz" id="bozze-count">0</span>
         </div>
         <div id="bozze-list"></div>
@@ -301,16 +288,17 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
       <div class="filter-row">
         <select id="filter-turno" onchange="loadStorico()">
           <option value="">Tutti i turni</option>
-          <option value="11:30">11:30</option>
-          <option value="15:30">15:30</option>
+          <option value="Primo invio 11:30">Primo invio 11:30</option>
+          <option value="Secondo invio 15:30">Secondo invio 15:30</option>
+          <option value="Invio extra">Invio extra</option>
         </select>
         <input type="date" id="filter-data" onchange="loadStorico()">
-        <input type="text" id="filter-agente" placeholder="Filtra agente…" oninput="loadStorico()" style="width:150px" id="filter-agente-wrap">
+        <input type="text" id="filter-agente" placeholder="Filtra agente…" oninput="loadStorico()" style="width:150px;display:none">
       </div>
       <div id="storico-list"></div>
     </div>
 
-    <!-- LIVELLI DI SERVIZIO -->
+    <!-- LIVELLI -->
     <div id="tab-livelli" style="display:none">
       <div class="storico-head">
         <h2>Livelli di servizio</h2>
@@ -318,23 +306,12 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
       </div>
       <div class="liv-search">
         <input type="text" id="liv-search" placeholder="Cerca provincia o sigla…" oninput="filterLivelli()" style="width:200px">
-        <select id="liv-filter-reg" onchange="filterLivelli()">
-          <option value="">Tutte le regioni</option>
-        </select>
+        <select id="liv-filter-reg" onchange="filterLivelli()"><option value="">Tutte le regioni</option></select>
       </div>
       <div class="form-card">
         <div class="liv-tbl-wrap">
-          <table class="liv-tbl" id="liv-tbl">
-            <thead>
-              <tr>
-                <th>Sigla</th>
-                <th>Provincia</th>
-                <th>Regione</th>
-                <th>Capoluogo</th>
-                <th>Provincia</th>
-                <th>Note</th>
-              </tr>
-            </thead>
+          <table class="liv-tbl">
+            <thead><tr><th>Sigla</th><th>Provincia</th><th>Regione</th><th>Capoluogo</th><th>Provincia</th><th>Note</th></tr></thead>
             <tbody id="liv-tbody"></tbody>
           </table>
         </div>
@@ -343,23 +320,23 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 
     <!-- ESPORTA (solo admin) -->
     <div id="tab-esporta" style="display:none">
-      <div class="storico-head">
-        <h2>Esporta Excel per turno</h2>
-      </div>
+      <div class="storico-head"><h2>Esporta Excel</h2></div>
       <div class="exp-card">
-        <div class="exp-head">Seleziona turno da esportare</div>
+        <div class="exp-head-bar">Seleziona invio da esportare</div>
         <div class="exp-body">
+          <div id="exp-alert"></div>
           <div class="filter-row" style="margin-bottom:1.1rem">
             <select id="exp-turno">
-              <option value="11:30">Turno 11:30</option>
-              <option value="15:30">Turno 15:30</option>
+              <option value="Primo invio 11:30">Primo invio 11:30</option>
+              <option value="Secondo invio 15:30">Secondo invio 15:30</option>
+              <option value="Invio extra">Invio extra</option>
             </select>
             <input type="date" id="exp-data">
-            <button class="btn btn-ghost" onclick="loadEsporta()">↻ Carica</button>
+            <button class="btn btn-ghost" onclick="loadEsporta()">↻ Carica non esportati</button>
           </div>
           <div id="esporta-preview"></div>
           <div class="exp-actions" id="export-actions" style="display:none">
-            <button class="btn btn-success" onclick="esportaExcel()">⬇ Scarica Excel (.xlsx)</button>
+            <button class="btn btn-success" onclick="esportaExcel()">⬇ Scarica Excel e segna come esportati</button>
             <span style="font-size:.76rem;color:var(--testo-sub)" id="exp-count"></span>
           </div>
         </div>
@@ -377,138 +354,181 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null, isAdmin = false;
 let destIdCounter = 0, artCounters = {};
-let livelliAll = [], esportaRows = [];
-let bozzeInterval = null;
+let livelliAll = [], esportaRows = [], esportaIds = [];
+let editingId = null; // ID della richiesta in modifica
 
-// ── AUTH ──────────────────────────────────────────────────────
+// ── TURNO LOGIC ──────────────────────────────────────────────
+function getTurno() {
+  const now = new Date();
+  const min = now.getHours() * 60 + now.getMinutes();
+  if (min < 11*60+30)  return 'Primo invio 11:30';
+  if (min < 13*60)     return 'Invio extra';
+  if (min < 15*60+30)  return 'Secondo invio 15:30';
+  if (min < 17*60)     return 'Invio extra';
+  return 'Primo invio 11:30'; // dopo le 17 → domani mattina
+}
+
+function turnoClass(t) {
+  if (t==='Primo invio 11:30')   return 'tag-primo';
+  if (t==='Secondo invio 15:30') return 'tag-secondo';
+  return 'tag-extra';
+}
+
+function updateTurnoBanner() {
+  const t = getTurno();
+  document.getElementById('turno-banner').style.display = 'block';
+  document.getElementById('turno-banner').innerHTML = `Finestra attiva: <span>${t}</span>`;
+  const lf = document.getElementById('turno-label-form');
+  if (lf) lf.textContent = t;
+}
+
+// ── AUTH ─────────────────────────────────────────────────────
 async function doLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const pwd   = document.getElementById('login-password').value;
-  const btn   = document.getElementById('login-btn');
-  const al    = document.getElementById('auth-alert');
-  al.innerHTML = ''; btn.innerHTML = '<span class="spinner"></span>'; btn.disabled = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
-  btn.innerHTML = 'Accedi'; btn.disabled = false;
-  if (error) { al.innerHTML = `<div class="alert alert-error">⚠ ${error.message}</div>`; return; }
+  const email=document.getElementById('login-email').value.trim();
+  const pwd=document.getElementById('login-password').value;
+  const btn=document.getElementById('login-btn');
+  const al=document.getElementById('auth-alert');
+  al.innerHTML=''; btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
+  btn.innerHTML='Accedi'; btn.disabled=false;
+  if(error){al.innerHTML=`<div class="alert alert-error">⚠ ${error.message}</div>`;return;}
   onLogin(data.user);
 }
 
 function onLogin(user) {
-  currentUser = user;
-  isAdmin = user.user_metadata?.role === 'admin';
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('header-user').style.display = 'flex';
-  document.getElementById('user-email-display').textContent = user.email;
-  if (isAdmin) {
-    document.getElementById('admin-badge').style.display = 'inline-flex';
-    document.getElementById('tab-exp-btn').style.display = 'flex';
-    // Admin vede filtro agente nello storico
-    document.getElementById('filter-agente').style.display = 'block';
-  } else {
-    document.getElementById('filter-agente').style.display = 'none';
+  currentUser=user; isAdmin=user.user_metadata?.role==='admin';
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('header-user').style.display='flex';
+  document.getElementById('user-email-display').textContent=user.email;
+  if(isAdmin){
+    document.getElementById('admin-badge').style.display='inline-flex';
+    document.getElementById('tab-exp-btn').style.display='flex';
+    document.getElementById('filter-agente').style.display='block';
   }
   updateTurnoBanner();
   addDest();
-  startBozzePolling();
+  loadBozze();
+  setInterval(loadBozze, 20000);
   setInterval(updateTurnoBanner, 60000);
 }
 
-async function checkSession() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) onLogin(session.user);
+async function checkSession(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session) onLogin(session.user);
 }
 checkSession();
 
-// ── TURNO ────────────────────────────────────────────────────
-function getTurno() {
-  const now = new Date();
-  return (now.getHours()*60+now.getMinutes()) < 12*60 ? '11:30' : '15:30';
-}
-function updateTurnoBanner() {
-  const t = getTurno();
-  const b = document.getElementById('turno-banner');
-  const l = document.getElementById('turno-label-form');
-  b.style.display = 'block';
-  b.innerHTML = `Turno attivo: <span>${t}</span>`;
-  if (l) l.textContent = `Turno: ${t}`;
-}
-
-// ── BOZZE POLLING ─────────────────────────────────────────────
-function startBozzePolling() {
-  loadBozze();
-  bozzeInterval = setInterval(loadBozze, 20000);
-}
-
+// ── BOZZE ────────────────────────────────────────────────────
 async function loadBozze() {
-  // Mostra le richieste inviate nel turno corrente di oggi (escluse quelle dell'utente corrente, ma incluse tutte)
-  const oggi = new Date().toISOString().slice(0,10);
-  const turno = getTurno();
-  const { data, error } = await sb.from('ordini_urgenti')
-    .select('id,agente,data_richiesta,destinatari,turno')
-    .eq('turno', turno)
-    .gte('data_richiesta', oggi+'T00:00:00')
-    .lte('data_richiesta', oggi+'T23:59:59')
-    .order('data_richiesta', { ascending: false });
+  const oggi=new Date().toISOString().slice(0,10);
+  const turno=getTurno();
+  const {data,error}=await sb.from('ordini_urgenti')
+    .select('id,agente,data_richiesta,destinatari,turno,esportato')
+    .eq('turno',turno)
+    .eq('esportato',false)
+    .gte('data_richiesta',oggi+'T00:00:00')
+    .lte('data_richiesta',oggi+'T23:59:59')
+    .order('data_richiesta',{ascending:false});
 
-  if (error || !data?.length) {
-    document.getElementById('bozze-section').style.display = 'none';
-    return;
-  }
+  if(error||!data?.length){document.getElementById('bozze-section').style.display='none';return;}
+  document.getElementById('bozze-section').style.display='block';
+  document.getElementById('bozze-count').textContent=data.length;
 
-  document.getElementById('bozze-section').style.display = 'block';
-  document.getElementById('bozze-count').textContent = data.length;
-
-  const html = data.map(r => {
-    const dt = new Date(r.data_richiesta);
-    const ora = dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-    const dests = (r.destinatari||[]).map(d => {
-      const arts = (d.articoli||[]).map(a => `<span>${a.ean}</span> ×${a.copie}`).join(' · ');
-      return `<div style="margin-bottom:.25rem"><span class="bozza-cod">Cod. ${d.cod_cliente}</span> — <span class="bozza-arts">${arts}</span></div>`;
+  document.getElementById('bozze-list').innerHTML=data.map(r=>{
+    const dt=new Date(r.data_richiesta);
+    const ora=dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    const isMe=r.agente===currentUser.email;
+    const dests=(r.destinatari||[]).map(d=>{
+      const arts=(d.articoli||[]).map(a=>`<span>${a.ean}</span> ×${a.copie}`).join(' · ');
+      return `<div style="margin-bottom:.22rem"><span class="bozza-cod">Cod. ${d.cod_cliente}</span> <span class="bozza-arts">— ${arts}</span></div>`;
     }).join('');
-    const isMe = r.agente === currentUser.email;
+    const editBtn = isMe ? `<button class="btn-edit" onclick="startEdit('${r.id}')">✏ Modifica</button>` : '';
     return `<div class="bozza-card">
       <div class="bozza-head">
-        <span class="bozza-agente">${isMe ? '👤 Tu' : r.agente}</span>
-        <span class="bozza-ts">${ora}</span>
+        <span class="bozza-agente">${isMe?'👤 Tu':r.agente}</span>
+        <div class="bozza-actions"><span class="bozza-ts">${ora}</span>${editBtn}</div>
       </div>
       ${dests}
     </div>`;
   }).join('');
-
-  document.getElementById('bozze-list').innerHTML = html;
 }
 
-// ── FORM ──────────────────────────────────────────────────────
-function addDest() {
-  const id = ++destIdCounter;
-  const wrap = document.createElement('div');
-  wrap.className = 'dest-block'; wrap.id = `dest-${id}`;
-  wrap.innerHTML = `
+// ── EDIT ─────────────────────────────────────────────────────
+async function startEdit(id) {
+  const {data,error}=await sb.from('ordini_urgenti').select('*').eq('id',id).single();
+  if(error||!data){alert('Errore nel caricamento della richiesta.');return;}
+
+  editingId=id;
+  // Reset form e ricarica con i dati esistenti
+  destIdCounter=0; artCounters={};
+  document.getElementById('destinatari-container').innerHTML='';
+
+  for(const dest of data.destinatari) {
+    const did=++destIdCounter;
+    artCounters[did]=0;
+    const wrap=document.createElement('div');
+    wrap.className='dest-block'; wrap.id=`dest-${did}`;
+    wrap.innerHTML=destBlockHTML(did);
+    document.getElementById('destinatari-container').appendChild(wrap);
+    // Popola campi destinatario
+    document.getElementById(`cod-${did}`).value=dest.cod_cliente||'';
+    document.getElementById(`data-${did}`).value=dest.data_consegna||'';
+    document.getElementById(`nord-${did}`).value=dest.nord||'';
+    document.getElementById(`partita-${did}`).value=dest.partita||'';
+    // Articoli
+    for(const art of dest.articoli) {
+      const aid=++artCounters[did];
+      addArticoloRaw(did,aid);
+      document.getElementById(`ean-${did}-${aid}`).value=art.ean||'';
+      document.getElementById(`titolo-${did}-${aid}`).value=art.titolo||'';
+      document.getElementById(`copie-${did}-${aid}`).value=art.copie||'';
+      document.getElementById(`sconto-${did}-${aid}`).value=art.sconto||'';
+    }
+    // Dest alternativa
+    if(dest.dest_alternativa) {
+      document.getElementById(`chk-alt-${did}`).checked=true;
+      toggleAlt(did);
+      document.getElementById(`alt-rs-${did}`).value=dest.dest_alternativa.ragione_sociale||'';
+      document.getElementById(`alt-ind-${did}`).value=dest.dest_alternativa.indirizzo||'';
+      document.getElementById(`alt-loc-${did}`).value=dest.dest_alternativa.localita||'';
+      document.getElementById(`alt-cap-${did}`).value=dest.dest_alternativa.cap||'';
+      document.getElementById(`alt-prov-${did}`).value=dest.dest_alternativa.provincia||'';
+    }
+  }
+
+  updateDestCounter();
+  document.getElementById('form-title').textContent='Modifica richiesta';
+  document.getElementById('edit-banner').style.display='flex';
+  document.getElementById('submit-btn').className='btn btn-save';
+  document.getElementById('submit-btn').textContent='💾 Salva modifiche';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit() {
+  editingId=null;
+  document.getElementById('form-title').textContent='Nuova richiesta';
+  document.getElementById('edit-banner').style.display='none';
+  document.getElementById('submit-btn').className='btn btn-accent';
+  document.getElementById('submit-btn').textContent='Invia richiesta';
+  resetForm();
+}
+
+// ── FORM HELPERS ─────────────────────────────────────────────
+function destBlockHTML(id) {
+  return `
   <div class="dhead">
     <span class="dhead-lbl">DESTINATARIO #${id}</span>
     <button class="dhead-del" onclick="removeDest(${id})">✕ rimuovi</button>
   </div>
   <div class="dbody">
     <div class="g2" style="margin-bottom:.65rem">
-      <div class="field">
-        <label>Cod. Cliente <span class="req">*</span></label>
-        <input type="text" id="cod-${id}" placeholder="es. 2643901" oninput="this.classList.remove('err')">
-      </div>
-      <div class="field">
-        <label>Data consegna desiderata</label>
-        <input type="date" id="data-${id}" onclick="this.showPicker&&this.showPicker()">
-      </div>
+      <div class="field"><label>Cod. Cliente <span class="req">*</span></label><input type="text" id="cod-${id}" placeholder="es. 2643901" oninput="this.classList.remove('err')"></div>
+      <div class="field"><label>Data consegna desiderata</label><input type="date" id="data-${id}" onclick="this.showPicker&&this.showPicker()"></div>
     </div>
     <div class="g2" style="margin-bottom:.65rem">
-      <div class="field">
-        <label>N. Ord. Cliente / Nota riga <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 30)</small></label>
-        <input type="text" id="nord-${id}" maxlength="30" placeholder="Nota opzionale">
-      </div>
-      <div class="field">
-        <label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO)</small></label>
-        <input type="text" id="partita-${id}" placeholder="Lascia vuoto per LIBERO">
-      </div>
+      <div class="field"><label>N. Ord. Cliente / Nota <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 30)</small></label><input type="text" id="nord-${id}" maxlength="30" placeholder="Nota opzionale"></div>
+      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO)</small></label><input type="text" id="partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
     </div>
     <div style="margin-bottom:.5rem">
       <div style="font-size:.67rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">Articoli <span class="req">*</span></div>
@@ -516,21 +536,12 @@ function addDest() {
       <button class="add-art-btn" onclick="addArticolo(${id})">＋ Aggiungi articolo</button>
     </div>
     <div style="margin-top:.9rem">
-      <label class="tog-alt">
-        <input type="checkbox" id="chk-alt-${id}" onchange="toggleAlt(${id})">
-        Destinazione alternativa (diversa dal punto vendita)
-      </label>
+      <label class="tog-alt"><input type="checkbox" id="chk-alt-${id}" onchange="toggleAlt(${id})"> Destinazione alternativa</label>
       <div id="alt-block-${id}" style="display:none">
         <div class="alt-block">
           <div class="alt-title">📦 Destinazione alternativa</div>
-          <div class="field gfull" style="margin-bottom:.6rem">
-            <label>Ragione sociale <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 35)</small> <span class="req">*</span></label>
-            <input type="text" id="alt-rs-${id}" maxlength="35" placeholder="Nome azienda / evento">
-          </div>
-          <div class="field gfull" style="margin-bottom:.6rem">
-            <label>Indirizzo <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 35)</small> <span class="req">*</span></label>
-            <input type="text" id="alt-ind-${id}" maxlength="35" placeholder="Via/Piazza, n.">
-          </div>
+          <div class="field gfull" style="margin-bottom:.6rem"><label>Ragione sociale <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 35)</small> <span class="req">*</span></label><input type="text" id="alt-rs-${id}" maxlength="35" placeholder="Nome azienda / evento"></div>
+          <div class="field gfull" style="margin-bottom:.6rem"><label>Indirizzo <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 35)</small> <span class="req">*</span></label><input type="text" id="alt-ind-${id}" maxlength="35" placeholder="Via/Piazza, n."></div>
           <div class="g3">
             <div class="field"><label>Località <span class="req">*</span></label><input type="text" id="alt-loc-${id}" placeholder="Città"></div>
             <div class="field"><label>CAP <span class="req">*</span></label><input type="text" id="alt-cap-${id}" placeholder="00000" maxlength="5"></div>
@@ -540,77 +551,124 @@ function addDest() {
       </div>
     </div>
   </div>`;
+}
+
+function addDest() {
+  const id=++destIdCounter;
+  const wrap=document.createElement('div');
+  wrap.className='dest-block'; wrap.id=`dest-${id}`;
+  wrap.innerHTML=destBlockHTML(id);
   document.getElementById('destinatari-container').appendChild(wrap);
   updateDestCounter();
   addArticolo(id);
 }
 
-function addArticolo(destId) {
-  if (!artCounters[destId]) artCounters[destId] = 0;
-  const aId = ++artCounters[destId];
-  const row = document.createElement('div');
-  row.className = 'art-row'; row.id = `art-${destId}-${aId}`;
-  row.innerHTML = `
+function addArticoloRaw(destId, aId) {
+  // Aggiunge riga articolo senza auto-incrementare artCounters
+  const row=document.createElement('div');
+  row.className='art-row'; row.id=`art-${destId}-${aId}`;
+  row.innerHTML=`
     <div class="field"><label>EAN A13 <span class="req">*</span></label><input type="text" id="ean-${destId}-${aId}" placeholder="9788812345678" maxlength="13" oninput="this.classList.remove('err')"></div>
     <div class="field"><label>Titolo / Nota</label><input type="text" id="titolo-${destId}-${aId}" placeholder="Opzionale"></div>
-    <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="copie-${destId}-${aId}" min="1" placeholder="≥16" oninput="checkCopie(this)"></div>
+    <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="copie-${destId}-${aId}" min="1" placeholder="≥15" oninput="checkCopie(this)"></div>
     <div class="field"><label>Sconto occ.</label><input type="number" id="sconto-${destId}-${aId}" min="0" max="99" placeholder="%"></div>
     <button class="del-art" onclick="removeArticolo(${destId},${aId})" title="Rimuovi">✕</button>`;
   document.getElementById(`art-list-${destId}`).appendChild(row);
 }
 
-function checkCopie(el){ el.classList.remove('err','copie-warn-inp'); if(el.value>0&&el.value<16) el.classList.add('copie-warn-inp'); }
+function addArticolo(destId) {
+  if(!artCounters[destId]) artCounters[destId]=0;
+  const aId=++artCounters[destId];
+  addArticoloRaw(destId, aId);
+}
+
+function checkCopie(el){
+  el.classList.remove('err','warn-inp');
+  if(el.value>0&&el.value<15) el.classList.add('warn-inp');
+}
 function removeArticolo(dId,aId){ const l=document.getElementById(`art-list-${dId}`); if(l.children.length<=1) return; document.getElementById(`art-${dId}-${aId}`).remove(); }
 function removeDest(id){ if(document.querySelectorAll('.dest-block').length<=1) return; document.getElementById(`dest-${id}`).remove(); updateDestCounter(); }
 function toggleAlt(id){ document.getElementById(`alt-block-${id}`).style.display=document.getElementById(`chk-alt-${id}`).checked?'block':'none'; }
 function updateDestCounter(){ const n=document.querySelectorAll('.dest-block').length; document.getElementById('dest-counter').textContent=`${n} destinatar${n===1?'io':'i'}`; }
 
-// ── INVIO ─────────────────────────────────────────────────────
-async function inviaRichiesta() {
-  const alertEl = document.getElementById('global-alert');
-  alertEl.innerHTML = '';
-  let valid = true;
-  const destinatari = [];
+// ── RACCOLTA DATI ────────────────────────────────────────────
+function raccogliDestinatari() {
+  let valid=true;
+  const destinatari=[];
+  let warnings=0;
 
-  document.querySelectorAll('.dest-block').forEach(block => {
-    const id = block.id.replace('dest-','');
-    const cod = document.getElementById(`cod-${id}`).value.trim();
-    if (!cod) { document.getElementById(`cod-${id}`).classList.add('err'); valid=false; }
-    const articoli = [];
-    block.querySelectorAll('.art-row').forEach(row => {
-      const rid = row.id.split('-').pop();
+  document.querySelectorAll('.dest-block').forEach(block=>{
+    const id=block.id.replace('dest-','');
+    const cod=document.getElementById(`cod-${id}`).value.trim();
+    if(!cod){document.getElementById(`cod-${id}`).classList.add('err');valid=false;}
+    const articoli=[];
+    block.querySelectorAll('.art-row').forEach(row=>{
+      const rid=row.id.split('-').pop();
       const eanEl=document.getElementById(`ean-${id}-${rid}`);
       const copieEl=document.getElementById(`copie-${id}-${rid}`);
-      if (!eanEl||!copieEl) return;
+      if(!eanEl||!copieEl) return;
       const ean=eanEl.value.trim(), copie=parseInt(copieEl.value)||0;
-      if (!ean){ eanEl.classList.add('err'); valid=false; }
-      if (copie<16){ copieEl.classList.add('err'); valid=false; }
-      articoli.push({ ean, titolo:document.getElementById(`titolo-${id}-${rid}`)?.value?.trim()||'', copie, sconto:document.getElementById(`sconto-${id}-${rid}`)?.value||'' });
+      if(!ean){eanEl.classList.add('err');valid=false;}
+      if(!copie){copieEl.classList.add('err');valid=false;}
+      if(copie>0&&copie<15) warnings++;
+      articoli.push({ean,titolo:document.getElementById(`titolo-${id}-${rid}`)?.value?.trim()||'',copie,sconto:document.getElementById(`sconto-${id}-${rid}`)?.value||''});
     });
-    const dest = { cod_cliente:cod, data_consegna:document.getElementById(`data-${id}`).value, nord:document.getElementById(`nord-${id}`).value.trim(), partita:document.getElementById(`partita-${id}`).value.trim(), articoli, dest_alternativa:null };
-    if (document.getElementById(`chk-alt-${id}`).checked) {
-      const rs=document.getElementById(`alt-rs-${id}`).value.trim(), ind=document.getElementById(`alt-ind-${id}`).value.trim(), loc=document.getElementById(`alt-loc-${id}`).value.trim(), cap=document.getElementById(`alt-cap-${id}`).value.trim(), prov=document.getElementById(`alt-prov-${id}`).value.trim();
-      if(!rs||!ind||!loc||!cap||!prov){ valid=false; }
+    const dest={cod_cliente:cod,data_consegna:document.getElementById(`data-${id}`).value,nord:document.getElementById(`nord-${id}`).value.trim(),partita:document.getElementById(`partita-${id}`).value.trim(),articoli,dest_alternativa:null};
+    if(document.getElementById(`chk-alt-${id}`).checked){
+      const rs=document.getElementById(`alt-rs-${id}`).value.trim(),ind=document.getElementById(`alt-ind-${id}`).value.trim(),loc=document.getElementById(`alt-loc-${id}`).value.trim(),cap=document.getElementById(`alt-cap-${id}`).value.trim(),prov=document.getElementById(`alt-prov-${id}`).value.trim();
+      if(!rs||!ind||!loc||!cap||!prov) valid=false;
       dest.dest_alternativa={ragione_sociale:rs,indirizzo:ind,localita:loc,cap,provincia:prov.toUpperCase()};
     }
     destinatari.push(dest);
   });
+  return {valid,destinatari,warnings};
+}
 
-  if (!valid){ alertEl.innerHTML='<div class="alert alert-error">⚠ Verifica i campi obbligatori. Le copie devono essere ≥ 16.</div>'; window.scrollTo({top:0,behavior:'smooth'}); return; }
+// ── INVIO / SALVA ────────────────────────────────────────────
+async function inviaRichiesta() {
+  const alertEl=document.getElementById('global-alert');
+  alertEl.innerHTML='';
+  const {valid,destinatari,warnings}=raccogliDestinatari();
+
+  if(!valid){alertEl.innerHTML='<div class="alert alert-error">⚠ Verifica i campi obbligatori evidenziati.</div>';window.scrollTo({top:0,behavior:'smooth'});return;}
+
+  if(warnings>0){
+    alertEl.innerHTML=`<div class="alert alert-warn">⚠ Attenzione: ${warnings} riga/e ha meno di 15 copie. Puoi comunque procedere.</div>`;
+  }
 
   const btn=document.getElementById('submit-btn');
-  btn.innerHTML='<span class="spinner"></span> Invio…'; btn.disabled=true;
-  const { error } = await sb.from('ordini_urgenti').insert({ agente:currentUser.email, turno:getTurno(), data_richiesta:new Date().toISOString(), destinatari });
-  btn.innerHTML='Invia richiesta'; btn.disabled=false;
+  const isEdit=!!editingId;
+  btn.innerHTML=`<span class="spinner"></span> ${isEdit?'Salvataggio…':'Invio…'}`;
+  btn.disabled=true;
 
-  if (error){ alertEl.innerHTML=`<div class="alert alert-error">⚠ Errore: ${error.message}</div>`; return; }
-  alertEl.innerHTML='<div class="alert alert-success">✓ Richiesta inviata con successo!</div>';
-  resetForm();
+  let error;
+  if(isEdit){
+    // UPDATE della richiesta esistente
+    const res=await sb.from('ordini_urgenti').update({destinatari,data_richiesta:new Date().toISOString()}).eq('id',editingId).eq('agente',currentUser.email);
+    error=res.error;
+  } else {
+    const res=await sb.from('ordini_urgenti').insert({agente:currentUser.email,turno:getTurno(),data_richiesta:new Date().toISOString(),destinatari,esportato:false});
+    error=res.error;
+  }
+
+  btn.innerHTML=isEdit?'💾 Salva modifiche':'Invia richiesta';
+  btn.disabled=false;
+
+  if(error){alertEl.innerHTML=`<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;return;}
+
+  if(isEdit){
+    alertEl.innerHTML='<div class="alert alert-success">✓ Richiesta aggiornata con successo!</div>';
+    cancelEdit();
+  } else {
+    alertEl.innerHTML='<div class="alert alert-success">✓ Richiesta inviata con successo!</div>';
+    resetForm();
+  }
   loadBozze();
-  setTimeout(()=>{ alertEl.innerHTML=''; }, 4000);
+  setTimeout(()=>{alertEl.innerHTML='';},4000);
 }
 
 function resetForm(){
+  if(editingId) cancelEdit(); // se ero in edit, usciamo prima
   destIdCounter=0; artCounters={};
   document.getElementById('destinatari-container').innerHTML='';
   document.getElementById('global-alert').innerHTML='';
@@ -618,131 +676,160 @@ function resetForm(){
 }
 
 // ── STORICO ──────────────────────────────────────────────────
-async function loadStorico() {
-  const list = document.getElementById('storico-list');
+async function loadStorico(){
+  const list=document.getElementById('storico-list');
   list.innerHTML='<div class="alert alert-info">Caricamento…</div>';
   const turno=document.getElementById('filter-turno').value;
   const data=document.getElementById('filter-data').value;
   const agente=document.getElementById('filter-agente').value.trim();
-
   let q=sb.from('ordini_urgenti').select('*').order('data_richiesta',{ascending:false}).limit(100);
-  if (turno) q=q.eq('turno',turno);
-  if (data)  q=q.gte('data_richiesta',data+'T00:00:00').lte('data_richiesta',data+'T23:59:59');
-
-  // Agente vede solo i propri, admin filtra liberamente
-  if (!isAdmin) {
-    q=q.eq('agente',currentUser.email);
-  } else if (agente) {
-    q=q.ilike('agente',`%${agente}%`);
-  }
-
+  if(turno) q=q.eq('turno',turno);
+  if(data)  q=q.gte('data_richiesta',data+'T00:00:00').lte('data_richiesta',data+'T23:59:59');
+  if(!isAdmin) q=q.eq('agente',currentUser.email);
+  else if(agente) q=q.ilike('agente',`%${agente}%`);
   const {data:rows,error}=await q;
-  if (error){ list.innerHTML=`<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
-  if (!rows?.length){ list.innerHTML='<div class="empty-state"><div class="icon">📋</div><p>Nessuna richiesta trovata.</p></div>'; return; }
-  list.innerHTML=rows.map(cardHTML).join('');
-}
-
-function cardHTML(r){
-  const dt=new Date(r.data_richiesta);
-  const dStr=dt.toLocaleDateString('it-IT'), oStr=dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-  const tClass=r.turno==='11:30'?'tag-1130':'tag-1530';
-  const destsHTML=(r.destinatari||[]).map(d=>{
-    const arts=(d.articoli||[]).map(a=>`<tr><td>${a.ean}</td><td>${a.titolo||'—'}</td><td class="cp${a.copie<16?' cp-warn':''}">${a.copie}</td><td>${a.sconto||'—'}</td></tr>`).join('');
-    const altBadge=d.dest_alternativa?'<span class="alt-badge">📦 alt.</span>':'';
-    const altInfo=d.dest_alternativa?`<div style="font-size:.7rem;color:var(--testo-sub);margin:.18rem 0 .32rem">→ ${d.dest_alternativa.ragione_sociale}, ${d.dest_alternativa.indirizzo}, ${d.dest_alternativa.localita} ${d.dest_alternativa.cap} (${d.dest_alternativa.provincia})</div>`:'';
-    return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span><div style="display:flex;gap:.35rem;align-items:center">${d.data_consegna?`<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}${altBadge}</div></div>${altInfo}<table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead><tbody>${arts}</tbody></table></div>`;
+  if(error){list.innerHTML=`<div class="alert alert-error">Errore: ${error.message}</div>`;return;}
+  if(!rows?.length){list.innerHTML='<div class="empty-state"><div class="icon">📋</div><p>Nessuna richiesta trovata.</p></div>';return;}
+  list.innerHTML=rows.map(r=>{
+    const dt=new Date(r.data_richiesta);
+    const dStr=dt.toLocaleDateString('it-IT'),oStr=dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    const tc=turnoClass(r.turno);
+    const expTag=r.esportato?`<span class="tag tag-exp">✓ esportato</span>`:'';
+    const destsHTML=(r.destinatari||[]).map(d=>{
+      const arts=(d.articoli||[]).map(a=>`<tr><td>${a.ean}</td><td>${a.titolo||'—'}</td><td class="cp">${a.copie}</td><td>${a.sconto||'—'}</td></tr>`).join('');
+      const altB=d.dest_alternativa?'<span class="alt-badge">📦 alt.</span>':'';
+      const altI=d.dest_alternativa?`<div style="font-size:.7rem;color:var(--testo-sub);margin:.18rem 0 .3rem">→ ${d.dest_alternativa.ragione_sociale}, ${d.dest_alternativa.indirizzo}, ${d.dest_alternativa.localita} ${d.dest_alternativa.cap} (${d.dest_alternativa.provincia})</div>`:'';
+      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span><div style="display:flex;gap:.35rem;align-items:center">${d.data_consegna?`<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}${altB}</div></div>${altI}<table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead><tbody>${arts}</tbody></table></div>`;
+    }).join('');
+    const totArt=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);
+    return `<div class="ric-card"><div class="ric-head"><div class="ric-meta"><span class="tag ${tc}">${r.turno}</span><span class="tag tag-ag">${r.agente}</span><span class="tag-dt">${dStr} ${oStr}</span>${expTag}</div><span style="font-size:.7rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span></div><div class="ric-body">${destsHTML}</div></div>`;
   }).join('');
-  const totArt=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);
-  return `<div class="ric-card"><div class="ric-head"><div class="ric-meta"><span class="tag ${tClass}">${r.turno}</span><span class="tag tag-ag">${r.agente}</span><span class="tag-dt">${dStr} ${oStr}</span></div><span style="font-size:.7rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span></div><div class="ric-body">${destsHTML}</div></div>`;
 }
 
-// ── LIVELLI DI SERVIZIO ───────────────────────────────────────
-async function loadLivelli() {
-  const tbody = document.getElementById('liv-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--testo-sub)">Caricamento…</td></tr>';
-  const { data, error } = await sb.from('livelli_servizio').select('*').order('sigla');
-  if (error) { tbody.innerHTML = `<tr><td colspan="6"><div class="alert alert-error">Errore: ${error.message}</div></td></tr>`; return; }
-  livelliAll = data || [];
-  // Popola filtro regioni
-  const regioni = [...new Set(livelliAll.map(r=>r.regione).filter(Boolean))].sort();
-  const sel = document.getElementById('liv-filter-reg');
-  sel.innerHTML = '<option value="">Tutte le regioni</option>' + regioni.map(r=>`<option value="${r}">${r}</option>`).join('');
+// ── LIVELLI ───────────────────────────────────────────────────
+async function loadLivelli(){
+  const tbody=document.getElementById('liv-tbody');
+  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--testo-sub)">Caricamento…</td></tr>';
+  const {data,error}=await sb.from('livelli_servizio').select('*').order('sigla');
+  if(error){tbody.innerHTML=`<tr><td colspan="6"><div class="alert alert-error">Errore: ${error.message}</div></td></tr>`;return;}
+  livelliAll=data||[];
+  const regioni=[...new Set(livelliAll.map(r=>r.regione).filter(Boolean))].sort();
+  const sel=document.getElementById('liv-filter-reg');
+  sel.innerHTML='<option value="">Tutte le regioni</option>'+regioni.map(r=>`<option value="${r}">${r}</option>`).join('');
   renderLivelli(livelliAll);
 }
-
-function filterLivelli() {
-  const q = document.getElementById('liv-search').value.toLowerCase();
-  const reg = document.getElementById('liv-filter-reg').value;
-  const filtered = livelliAll.filter(r => {
-    const matchQ = !q || r.sigla.toLowerCase().includes(q) || r.provincia.toLowerCase().includes(q);
-    const matchR = !reg || r.regione === reg;
-    return matchQ && matchR;
-  });
-  renderLivelli(filtered);
+function filterLivelli(){
+  const q=document.getElementById('liv-search').value.toLowerCase();
+  const reg=document.getElementById('liv-filter-reg').value;
+  renderLivelli(livelliAll.filter(r=>(!q||(r.sigla.toLowerCase().includes(q)||r.provincia.toLowerCase().includes(q)))&&(!reg||r.regione===reg)));
 }
-
-function pillGiorni(n) {
-  if (!n) return '<span style="color:var(--testo-sub)">—</span>';
-  const cls = n<=2?'g2pill':n===3?'g3pill':n===4?'g4pill':'g5pill';
-  return `<span class="giorni-pill ${cls}">${n}</span>`;
-}
-
-function renderLivelli(rows) {
-  const tbody = document.getElementById('liv-tbody');
-  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--testo-sub)">Nessun risultato.</td></tr>'; return; }
-  tbody.innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.sigla}</td>
-      <td style="color:var(--testo)">${r.provincia}</td>
-      <td>${r.regione||'—'}</td>
-      <td>${pillGiorni(r.giorni_capoluogo)}</td>
-      <td>${pillGiorni(r.giorni_provincia)}</td>
-      <td>${r.note?`<span class="note-pill">⚠ ${r.note}</span>`:'—'}</td>
-    </tr>`).join('');
+function gpill(n){if(!n) return '<span style="color:var(--testo-sub)">—</span>';const c=n<=2?'g2p':n===3?'g3p':n===4?'g4p':'g5p';return `<span class="gpill ${c}">${n}</span>`;}
+function renderLivelli(rows){
+  const tb=document.getElementById('liv-tbody');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--testo-sub)">Nessun risultato.</td></tr>';return;}
+  tb.innerHTML=rows.map(r=>`<tr><td>${r.sigla}</td><td style="color:var(--testo)">${r.provincia}</td><td>${r.regione||'—'}</td><td>${gpill(r.giorni_capoluogo)}</td><td>${gpill(r.giorni_provincia)}</td><td>${r.note?`<span class="note-pill">⚠ ${r.note}</span>`:'—'}</td></tr>`).join('');
 }
 
 // ── ESPORTA ───────────────────────────────────────────────────
-async function loadEsporta() {
+async function loadEsporta(){
   const preview=document.getElementById('esporta-preview');
   const actions=document.getElementById('export-actions');
+  const expAlert=document.getElementById('exp-alert');
   preview.innerHTML='<div class="alert alert-info">Caricamento…</div>';
-  actions.style.display='none'; esportaRows=[];
+  actions.style.display='none'; esportaRows=[]; esportaIds=[];
+  expAlert.innerHTML='';
+
   const turno=document.getElementById('exp-turno').value;
   const data=document.getElementById('exp-data').value;
-  if (!data){ preview.innerHTML='<div class="alert alert-error">⚠ Seleziona una data.</div>'; return; }
-  const {data:rows,error}=await sb.from('ordini_urgenti').select('*').eq('turno',turno).gte('data_richiesta',data+'T00:00:00').lte('data_richiesta',data+'T23:59:59').order('data_richiesta',{ascending:true});
-  if (error){ preview.innerHTML=`<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
-  if (!rows?.length){ preview.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Nessuna richiesta per questo turno.</p></div>'; return; }
+  if(!data){preview.innerHTML='<div class="alert alert-error">⚠ Seleziona una data.</div>';return;}
+
+  const {data:rows,error}=await sb.from('ordini_urgenti').select('*')
+    .eq('turno',turno).eq('esportato',false)
+    .gte('data_richiesta',data+'T00:00:00').lte('data_richiesta',data+'T23:59:59')
+    .order('data_richiesta',{ascending:true});
+
+  if(error){preview.innerHTML=`<div class="alert alert-error">Errore: ${error.message}</div>`;return;}
+  if(!rows?.length){preview.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Nessuna richiesta da esportare per questo invio.<br>Potrebbero essere già state esportate.</p></div>';return;}
+
+  esportaIds=rows.map(r=>r.id);
   rows.forEach(r=>{
     (r.destinatari||[]).forEach(d=>{
       (d.articoli||[]).forEach(a=>{
         let dc='';
-        if(d.data_consegna){ const p=d.data_consegna.split('-'); if(p.length===3) dc=p[2]+p[1]+p[0]; }
-        esportaRows.push({ cod:d.cod_cliente, ean:a.ean, copie:a.copie, sconto:a.sconto||'', pag:'', nord:d.nord||'', data_cons:dc, partita:d.partita||'', alt_rs:d.dest_alternativa?.ragione_sociale||'', alt_ind:d.dest_alternativa?.indirizzo||'', alt_loc:d.dest_alternativa?.localita||'', alt_cap:d.dest_alternativa?.cap||'', alt_prov:d.dest_alternativa?.provincia||'', agente:r.agente, titolo:a.titolo||'' });
+        if(d.data_consegna){const p=d.data_consegna.split('-');if(p.length===3)dc=p[2]+p[1]+p[0];}
+        esportaRows.push({cod:d.cod_cliente,ean:a.ean,copie:a.copie,sconto:a.sconto||'',pag:'',nord:d.nord||'',data_cons:dc,partita:d.partita||'',alt_rs:d.dest_alternativa?.ragione_sociale||'',alt_ind:d.dest_alternativa?.indirizzo||'',alt_loc:d.dest_alternativa?.localita||'',alt_cap:d.dest_alternativa?.cap||'',alt_prov:d.dest_alternativa?.provincia||'',agente:r.agente,titolo:a.titolo||''});
       });
     });
   });
-  const byAgente={};
-  rows.forEach(r=>{ if(!byAgente[r.agente]) byAgente[r.agente]={r:0,d:0,a:0}; byAgente[r.agente].r++; byAgente[r.agente].d+=(r.destinatari||[]).length; byAgente[r.agente].a+=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0); });
-  const riepHTML=Object.entries(byAgente).map(([ag,v])=>`<tr><td>${ag}</td><td>${v.r}</td><td>${v.d}</td><td><span class="cnt-badge">${v.a}</span></td></tr>`).join('');
-  preview.innerHTML=`<table class="riep-tbl"><thead><tr><th>Agente</th><th>Richieste</th><th>Destinatari</th><th>Righe</th></tr></thead><tbody>${riepHTML}</tbody></table>`;
+
+  const byA={};
+  rows.forEach(r=>{if(!byA[r.agente])byA[r.agente]={r:0,d:0,a:0};byA[r.agente].r++;byA[r.agente].d+=(r.destinatari||[]).length;byA[r.agente].a+=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);});
+  const riepHTML=Object.entries(byA).map(([ag,v])=>`<tr><td>${ag}</td><td>${v.r}</td><td>${v.d}</td><td><span class="cnt-badge">${v.a}</span></td></tr>`).join('');
+  preview.innerHTML=`<table class="riep-tbl"><thead><tr><th>Agente</th><th>Richieste</th><th>Destinatari</th><th>Righe art.</th></tr></thead><tbody>${riepHTML}</tbody></table>`;
   document.getElementById('exp-count').textContent=`${esportaRows.length} righe totali`;
   actions.style.display='flex';
 }
 
-function esportaExcel(){
-  if (!esportaRows.length) return;
-  const turno=document.getElementById('exp-turno').value.replace(':','');
+async function esportaExcel(){
+  if(!esportaRows.length) return;
+  const turnoLabel=document.getElementById('exp-turno').value;
   const data=document.getElementById('exp-data').value;
   const df=data?data.split('-').reverse().join(''):'';
-  const headers=['Cod. cliente  (campo obbligatorio)','EAN A 13  (campo obbligatorio)','Copie fattura  (campo obbligatorio) > 15','Sconto occ.','Pag. occas.','N. ord. Cliente (max 30 caratteri) -  NOTA DI RIGA','Data desiderata di consegna  ggmmaaaa','Partita  (se non valorizzato evasione da partita LIBERO)','Altra destinazione - Ragione sociale  (max 35 caratteri)','Altra destinazione - Indirizzo  (max 35 caratteri)','Altra destinazione - Località','Altra destinazione - CAP  (formato testo)','Altra destinazione - Provincia','Indirizzo mail A:  (campo obbligatorio)','@','telefono estemporaneo (campo obbligatorio)'];
+  const turnoFile=turnoLabel.replace(/\s/g,'_').replace(/:/g,'');
+  const filename=`ORDINI_URGENTI_${df}_${turnoFile}.xlsx`;
+
+  const headers=[
+    'Cod. cliente  (campo obbligatorio)',
+    'EAN A 13  (campo obbligatorio)',
+    'Copie fattura  (campo obbligatorio) > 15',
+    'Sconto occ.',
+    'Pag. occas.',
+    'N. ord. Cliente (max 30 caratteri) -  NOTA DI RIGA',
+    'Data desiderata di consegna  ggmmaaaa',
+    'Partita  (se non valorizzato evasione da partita LIBERO)',
+    'Altra destinazione - Ragione sociale  (max 35 caratteri)',
+    'Altra destinazione - Indirizzo  (max 35 caratteri)',
+    'Altra destinazione - Località',
+    'Altra destinazione - CAP  (formato testo)',
+    'Altra destinazione - Provincia',
+    'Indirizzo mail A:  (campo obbligatorio)',
+    'Indirizzo mail CC:',   // colonna O — mail agente
+    'telefono estemporaneo (campo obbligatorio)'
+  ];
+
   const wsData=[headers];
-  esportaRows.forEach(r=>wsData.push([r.cod,r.ean,r.copie,r.sconto,r.pag,r.nord,r.data_cons,r.partita,r.alt_rs,r.alt_ind,r.alt_loc,r.alt_cap,r.alt_prov,'serena.bottalico@pde.it','','']));
+  esportaRows.forEach(r=>wsData.push([
+    r.cod, r.ean, r.copie, r.sconto, r.pag, r.nord,
+    r.data_cons, r.partita,
+    r.alt_rs, r.alt_ind, r.alt_loc, r.alt_cap, r.alt_prov,
+    'servizioclienti@pde.it',
+    r.agente,   // CC = mail di chi ha inserito
+    ''
+  ]));
+
   const wb=XLSX.utils.book_new();
   const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols']=[{wch:18},{wch:18},{wch:10},{wch:10},{wch:10},{wch:32},{wch:18},{wch:18},{wch:36},{wch:36},{wch:20},{wch:10},{wch:12},{wch:30},{wch:30},{wch:18}];
+  ws['!cols']=[{wch:18},{wch:18},{wch:10},{wch:10},{wch:10},{wch:32},{wch:18},{wch:18},{wch:36},{wch:36},{wch:20},{wch:10},{wch:12},{wch:28},{wch:28},{wch:18}];
   XLSX.utils.book_append_sheet(wb,ws,'COMPILA QUI');
-  XLSX.writeFile(wb,`ORDINI_URGENTI_${df}_${turno}.xlsx`);
+  XLSX.writeFile(wb,filename);
+
+  // Segna come esportati su Supabase
+  const {error}=await sb.from('ordini_urgenti').update({
+    esportato:true,
+    turno_esportazione:turnoLabel,
+    data_esportazione:new Date().toISOString(),
+    esportato_da:currentUser.email
+  }).in('id',esportaIds);
+
+  const expAlert=document.getElementById('exp-alert');
+  if(error){
+    expAlert.innerHTML=`<div class="alert alert-error">⚠ Excel scaricato ma errore nel marcare come esportati: ${error.message}</div>`;
+  } else {
+    expAlert.innerHTML=`<div class="alert alert-success">✓ ${esportaIds.length} richieste marcate come esportate.</div>`;
+    document.getElementById('export-actions').style.display='none';
+    document.getElementById('esporta-preview').innerHTML='<div class="empty-state"><div class="icon">✅</div><p>Esportazione completata.</p></div>';
+    esportaRows=[]; esportaIds=[];
+  }
 }
 
 // ── TABS ──────────────────────────────────────────────────────
@@ -751,18 +838,12 @@ function showTab(name){
     document.getElementById(`tab-${t}`).style.display=t===name?'block':'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  const map={nuova:0,storico:1,livelli:2,esporta:3};
   const allBtns=document.querySelectorAll('.tab-btn');
-  if(allBtns[map[name]]) allBtns[map[name]].classList.add('active');
-  if(name==='storico'){
-    if(!document.getElementById('filter-data').value) document.getElementById('filter-data').value=new Date().toISOString().slice(0,10);
-    loadStorico();
-  }
-  if(name==='livelli' && !livelliAll.length) loadLivelli();
-  if(name==='esporta'){
-    if(!document.getElementById('exp-data').value) document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);
-    document.getElementById('exp-turno').value=getTurno();
-  }
+  const idx={nuova:0,storico:1,livelli:2,esporta:3};
+  if(allBtns[idx[name]]) allBtns[idx[name]].classList.add('active');
+  if(name==='storico'){if(!document.getElementById('filter-data').value)document.getElementById('filter-data').value=new Date().toISOString().slice(0,10);loadStorico();}
+  if(name==='livelli'&&!livelliAll.length) loadLivelli();
+  if(name==='esporta'){if(!document.getElementById('exp-data').value)document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);document.getElementById('exp-turno').value=getTurno();}
 }
 </script>
 </body>
