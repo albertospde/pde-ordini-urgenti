@@ -23,7 +23,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--bordo);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;}
 .hbrand{display:flex;align-items:center;gap:.6rem;}
-.hlogo{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:#fff;letter-spacing:.12em;}
+.hlogo-wrap{background:#fff;border-radius:6px;padding:.22rem .5rem;display:flex;align-items:center;justify-content:center;}
+.hlogo-wrap img{height:22px;width:auto;display:block;}
 .hsep{width:1px;height:16px;background:var(--bordo);}
 .htitle{font-size:.8rem;font-weight:500;color:var(--testo-dim);}
 .hbadge{background:var(--azzurro);color:#fff;font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.13rem .5rem;border-radius:20px;}
@@ -207,7 +208,10 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 
 <header>
   <div class="hbrand">
-    <span class="hlogo">PDE</span><div class="hsep"></div>
+    <div class="hlogo-wrap">
+      <img src="https://albertospde.github.io/pde-hub/pde-logo.png" alt="PDE" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:DM Mono,monospace;font-size:.95rem;font-weight:600;color:#1a2d6b&quot;>PDE</span>'">
+    </div>
+    <div class="hsep"></div>
     <span class="htitle">Ordini Urgenti</span>
     <span class="hbadge">live</span>
   </div>
@@ -265,7 +269,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
           <span class="fcard-foot-info" id="turno-label-form"></span>
           <div style="display:flex;gap:.5rem;align-items:center">
             <button class="btn btn-ghost" onclick="resetForm()">Azzera</button>
-            <button class="btn btn-accent" onclick="inviaRichiesta()" id="submit-btn">Salva richiesta</button>
+            <button class="btn btn-accent" onclick="inviaRichiesta()" id="submit-btn">Invia richiesta</button>
           </div>
         </div>
       </div>
