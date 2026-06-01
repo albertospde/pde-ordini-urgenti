@@ -6,37 +6,6 @@
 <title>Ordini Urgenti — PDE</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
-// ── CANCELLA RICHIESTA ────────────────────────────────────────
-async function cancellaRichiesta(id) {
-  if (!confirm('Sei sicuro di voler cancellare questa richiesta? L'operazione non può essere annullata.')) return;
-  const { error } = await sb.from('ordini_urgenti').delete().eq('id', id).eq('agente', currentUser.email);
-  if (error) {
-    document.getElementById('global-alert').innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;
-    return;
-  }
-  document.getElementById('global-alert').innerHTML = '<div class="alert alert-success">✓ Richiesta cancellata.</div>';
-  loadBozze();
-  setTimeout(() => { document.getElementById('global-alert').innerHTML = ''; }, 3000);
-}
-
-// ── LOGOUT ────────────────────────────────────────────────────
-async function doLogout() {
-  await sb.auth.signOut();
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('header-user').style.display = 'none';
-  document.getElementById('admin-badge').style.display = 'none';
-  document.getElementById('turno-banner').style.display = 'none';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-password').value = '';
-  currentUser = null; isAdmin = false;
-  destIdCounter = 0; artCounters = {};
-  sospDestCounter = 0; sospArtCounters = {};
-  if (bozzeInterval) clearInterval(bozzeInterval);
-}
-
-</script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -1174,6 +1143,35 @@ function chiudiModalSospesi() {
   document.getElementById('modal-sospesi').style.display = 'none';
 }
 
+
+// ── CANCELLA RICHIESTA ────────────────────────────────────────
+async function cancellaRichiesta(id) {
+  if (!confirm("Sei sicuro di voler cancellare questa richiesta?\nL\'operazione non può essere annullata.")) return;
+  const { error } = await sb.from('ordini_urgenti').delete().eq('id', id).eq('agente', currentUser.email);
+  if (error) {
+    document.getElementById('global-alert').innerHTML = '<div class="alert alert-error">⚠ Errore: ' + error.message + '</div>';
+    return;
+  }
+  document.getElementById('global-alert').innerHTML = '<div class="alert alert-success">✓ Richiesta cancellata.</div>';
+  loadBozze();
+  setTimeout(() => { document.getElementById('global-alert').innerHTML = ''; }, 3000);
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('header-user').style.display = 'none';
+  document.getElementById('admin-badge').style.display = 'none';
+  document.getElementById('turno-banner').style.display = 'none';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  currentUser = null; isAdmin = false;
+  destIdCounter = 0; artCounters = {};
+  sospDestCounter = 0; sospArtCounters = {};
+  if (bozzeInterval) clearInterval(bozzeInterval);
+}
 </script>
 </body>
 </html>
