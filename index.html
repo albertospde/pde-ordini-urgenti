@@ -673,9 +673,9 @@ function checkCopie(el){
   if(el.value>0&&el.value<15) el.classList.add('warn-inp');
 }
 function removeArticolo(dId,aId){ const l=document.getElementById(`art-list-${dId}`); if(l.children.length<=1) return; document.getElementById(`art-${dId}-${aId}`).remove(); }
-function removeDest(id){ if(document.querySelectorAll('.dest-block').length<=1) return; document.getElementById(`dest-${id}`).remove(); updateDestCounter(); }
+function removeDest(id){ if(document.querySelectorAll('#destinatari-container .dest-block').length<=1) return; document.getElementById(`dest-${id}`).remove(); updateDestCounter(); }
 function toggleAlt(id){ document.getElementById(`alt-block-${id}`).style.display=document.getElementById(`chk-alt-${id}`).checked?'block':'none'; }
-function updateDestCounter(){ const n=document.querySelectorAll('.dest-block').length; document.getElementById('dest-counter').textContent=`${n} destinatar${n===1?'io':'i'}`; }
+function updateDestCounter(){ const n=document.querySelectorAll('#destinatari-container .dest-block').length; document.getElementById('dest-counter').textContent=`${n} destinatar${n===1?'io':'i'}`; }
 
 // ── RACCOLTA DATI ────────────────────────────────────────────
 function raccogliDestinatari() {
@@ -683,7 +683,7 @@ function raccogliDestinatari() {
   const destinatari=[];
   let warnings=0;
 
-  document.querySelectorAll('.dest-block').forEach(block=>{
+  document.querySelectorAll('#destinatari-container .dest-block').forEach(block=>{
     const id=block.id.replace('dest-','');
     const cod=document.getElementById(`cod-${id}`).value.trim();
     if(!cod){document.getElementById(`cod-${id}`).classList.add('err');valid=false;}
