@@ -198,6 +198,28 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--testo-sub);}
 .empty-state .icon{font-size:2rem;margin-bottom:.5rem;opacity:.4;}
 .empty-state p{font-size:.86rem;}
+/* SOSPESI */
+.sosp-card{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:10px;margin-bottom:.8rem;overflow:hidden;}
+.sosp-head{padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;background:rgba(245,166,35,.08);border-bottom:1px solid rgba(245,166,35,.15);gap:.5rem;flex-wrap:wrap;}
+.sosp-meta{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;}
+.sosp-body{padding:.75rem 1rem;}
+.tag-sosp{background:rgba(245,166,35,.15);color:var(--warn);border:1px solid rgba(245,166,35,.3);font-size:.62rem;font-weight:700;padding:.13rem .48rem;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;}
+.btn-trasferisci{background:rgba(0,212,140,.12);color:var(--success);border:1px solid rgba(0,212,140,.3);font-size:.75rem;padding:.28rem .7rem;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .14s;}
+.btn-trasferisci:hover{background:rgba(0,212,140,.25);}
+.btn-del-sosp{background:rgba(255,58,94,.1);color:var(--rosso);border:1px solid rgba(255,58,94,.25);font-size:.75rem;padding:.28rem .7rem;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:600;transition:all .14s;}
+.btn-del-sosp:hover{background:rgba(255,58,94,.2);}
+.sosp-nota{font-size:.75rem;color:var(--warn);font-style:italic;margin-bottom:.4rem;}
+
+/* MODALE SOSPESI */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-box{background:var(--bg-card);border:1px solid rgba(245,166,35,.3);border-radius:14px;padding:2rem;width:100%;max-width:480px;box-shadow:0 24px 64px rgba(0,0,0,.5);position:relative;}
+.modal-title{font-size:1.1rem;font-weight:700;color:var(--warn);margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem;}
+.modal-sub{font-size:.82rem;color:var(--testo-dim);margin-bottom:1.2rem;}
+.modal-list{max-height:220px;overflow-y:auto;margin-bottom:1.2rem;}
+.modal-item{background:rgba(255,255,255,.03);border:1px solid var(--bordo);border-radius:7px;padding:.55rem .8rem;margin-bottom:.45rem;font-size:.8rem;color:var(--testo-dim);}
+.modal-item strong{color:var(--testo);display:block;margin-bottom:.15rem;}
+.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;}
+
 .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
@@ -206,10 +228,24 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 </head>
 <body>
 
+<!-- MODALE SOSPESI -->
+<div id="modal-sospesi" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ Verifica i sospesi</div>
+    <div class="modal-sub" id="modal-sosp-sub"></div>
+    <div class="modal-list" id="modal-sosp-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="chiudiModalSospesi()">Chiudi</button>
+      <button class="btn" style="background:rgba(245,166,35,.2);color:var(--warn);border:1px solid rgba(245,166,35,.3)" onclick="chiudiModalSospesi();showTab('sospesi')">Vai ai sospesi</button>
+    </div>
+  </div>
+</div>
+
+
 <header>
   <div class="hbrand">
     <div class="hlogo-wrap">
-      <img src="https://albertospde.github.io/pde-hub/pde-logo.png" alt="PDE" onerror="this.parentElement.innerHTML='<span style=&quot;font-family:DM Mono,monospace;font-size:.95rem;font-weight:600;color:#1a2d6b&quot;>PDE</span>'">
+      <img src="data:image/png;base64,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" alt="PDE">
     </div>
     <div class="hsep"></div>
     <span class="htitle">Ordini Urgenti</span>
@@ -242,6 +278,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
       <button class="tab-btn active" onclick="showTab('nuova')">+ Nuova richiesta</button>
       <button class="tab-btn" onclick="showTab('storico')">Storico inviati</button>
       <button class="tab-btn" onclick="showTab('livelli')">Livelli di servizio</button>
+      <button class="tab-btn" id="tab-sosp-btn" style="display:none" onclick="showTab('sospesi')">⏸ Sospesi</button>
       <button class="tab-btn" id="tab-exp-btn" style="display:none" onclick="showTab('esporta')">⬇ Esporta Excel</button>
     </div>
 
@@ -320,6 +357,46 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
           </table>
         </div>
       </div>
+    </div>
+
+
+    <!-- SOSPESI (solo admin) -->
+    <div id="tab-sospesi" style="display:none">
+      <div class="storico-head">
+        <h2>Ordini sospesi</h2>
+        <button class="btn btn-ghost" onclick="loadSospesi()">↻ Aggiorna</button>
+      </div>
+      <div id="sosp-alert"></div>
+
+      <!-- Form nuovo sospeso -->
+      <div class="form-card" style="margin-bottom:1.5rem">
+        <div class="fcard-head">
+          <span>Nuovo ordine sospeso</span>
+          <span style="font-size:.72rem;color:var(--testo-dim)">Non verrà inviato finché non trasferito</span>
+        </div>
+        <div class="fcard-body">
+          <div class="field" style="margin-bottom:.8rem">
+            <label>Nota / Motivo sospensione</label>
+            <input type="text" id="sosp-nota" placeholder="es. In attesa di conferma quantità...">
+          </div>
+          <div id="sosp-dest-container"></div>
+          <button class="add-dest-btn" onclick="addSospDest()">＋ Aggiungi destinatario</button>
+        </div>
+        <div class="fcard-foot">
+          <span class="fcard-foot-info">Verrà salvato come sospeso</span>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn btn-ghost" onclick="resetSospForm()">Azzera</button>
+            <button class="btn" style="background:rgba(245,166,35,.2);color:var(--warn);border:1px solid rgba(245,166,35,.3)" onclick="salvaSospeso()">⏸ Salva come sospeso</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista sospesi -->
+      <div class="storico-head" style="margin-top:1.5rem">
+        <h2 style="font-size:1rem">Sospesi attivi</h2>
+        <span id="sosp-count-label" style="font-size:.78rem;color:var(--testo-sub)"></span>
+      </div>
+      <div id="sosp-list"></div>
     </div>
 
     <!-- ESPORTA (solo admin) -->
@@ -408,10 +485,13 @@ function onLogin(user) {
   if(isAdmin){
     document.getElementById('admin-badge').style.display='inline-flex';
     document.getElementById('tab-exp-btn').style.display='flex';
+    document.getElementById('tab-sosp-btn').style.display='flex';
     document.getElementById('filter-agente').style.display='block';
   }
+  if(isAdmin) setTimeout(checkSospesiPopup, 800);
   updateTurnoBanner();
   addDest();
+  if(isAdmin) { sospDestCounter=0; sospArtCounters={}; addSospDest(); }
   loadBozze();
   setInterval(loadBozze, 20000);
   setInterval(updateTurnoBanner, 60000);
@@ -838,17 +918,224 @@ async function esportaExcel(){
 
 // ── TABS ──────────────────────────────────────────────────────
 function showTab(name){
-  ['nuova','storico','livelli','esporta'].forEach(t=>{
+  ['nuova','storico','livelli','sospesi','esporta'].forEach(t=>{
     document.getElementById(`tab-${t}`).style.display=t===name?'block':'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   const allBtns=document.querySelectorAll('.tab-btn');
-  const idx={nuova:0,storico:1,livelli:2,esporta:3};
+  const idx={nuova:0,storico:1,livelli:2,sospesi:3,esporta:4};
   if(allBtns[idx[name]]) allBtns[idx[name]].classList.add('active');
   if(name==='storico'){if(!document.getElementById('filter-data').value)document.getElementById('filter-data').value=new Date().toISOString().slice(0,10);loadStorico();}
   if(name==='livelli'&&!livelliAll.length) loadLivelli();
   if(name==='esporta'){if(!document.getElementById('exp-data').value)document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);document.getElementById('exp-turno').value=getTurno();}
 }
+
+// ── SOSPESI ───────────────────────────────────────────────────
+let sospDestCounter = 0, sospArtCounters = {};
+
+function addSospDest() {
+  const id = ++sospDestCounter;
+  const wrap = document.createElement('div');
+  wrap.className = 'dest-block'; wrap.id = `sosp-dest-${id}`;
+  wrap.innerHTML = `
+  <div class="dhead">
+    <span class="dhead-lbl">DESTINATARIO #${id}</span>
+    <button class="dhead-del" onclick="removeSospDest(${id})">✕ rimuovi</button>
+  </div>
+  <div class="dbody">
+    <div class="g2" style="margin-bottom:.65rem">
+      <div class="field"><label>Cod. Cliente <span class="req">*</span></label><input type="text" id="sosp-cod-${id}" placeholder="es. 2643901"></div>
+      <div class="field"><label>Data consegna desiderata</label><input type="date" id="sosp-data-${id}" onclick="this.showPicker&&this.showPicker()"></div>
+    </div>
+    <div class="g2" style="margin-bottom:.65rem">
+      <div class="field"><label>N. Ord. Cliente / Nota <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 30)</small></label><input type="text" id="sosp-nord-${id}" maxlength="30" placeholder="Nota opzionale"></div>
+      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO)</small></label><input type="text" id="sosp-partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
+    </div>
+    <div style="margin-bottom:.5rem">
+      <div style="font-size:.67rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">Articoli <span class="req">*</span></div>
+      <div class="art-list" id="sosp-art-list-${id}"></div>
+      <button class="add-art-btn" onclick="addSospArticolo(${id})">＋ Aggiungi articolo</button>
+    </div>
+    <div style="margin-top:.9rem">
+      <label class="tog-alt"><input type="checkbox" id="sosp-chk-alt-${id}" onchange="toggleSospAlt(${id})"> Destinazione alternativa</label>
+      <div id="sosp-alt-block-${id}" style="display:none">
+        <div class="alt-block">
+          <div class="alt-title">📦 Destinazione alternativa</div>
+          <div class="field gfull" style="margin-bottom:.6rem"><label>Ragione sociale <span class="req">*</span></label><input type="text" id="sosp-alt-rs-${id}" maxlength="35" placeholder="Nome azienda / evento"></div>
+          <div class="field gfull" style="margin-bottom:.6rem"><label>Indirizzo <span class="req">*</span></label><input type="text" id="sosp-alt-ind-${id}" maxlength="35" placeholder="Via/Piazza, n."></div>
+          <div class="g3">
+            <div class="field"><label>Località <span class="req">*</span></label><input type="text" id="sosp-alt-loc-${id}" placeholder="Città"></div>
+            <div class="field"><label>CAP <span class="req">*</span></label><input type="text" id="sosp-alt-cap-${id}" placeholder="00000" maxlength="5"></div>
+            <div class="field"><label>Prov. <span class="req">*</span></label><input type="text" id="sosp-alt-prov-${id}" placeholder="MI" maxlength="2" style="text-transform:uppercase"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('sosp-dest-container').appendChild(wrap);
+  addSospArticolo(id);
+}
+
+function addSospArticolo(destId) {
+  if (!sospArtCounters[destId]) sospArtCounters[destId] = 0;
+  const aId = ++sospArtCounters[destId];
+  const row = document.createElement('div');
+  row.className = 'art-row'; row.id = `sosp-art-${destId}-${aId}`;
+  row.innerHTML = `
+    <div class="field"><label>EAN A13 <span class="req">*</span></label><input type="text" id="sosp-ean-${destId}-${aId}" placeholder="9788812345678" maxlength="13"></div>
+    <div class="field"><label>Titolo / Nota</label><input type="text" id="sosp-titolo-${destId}-${aId}" placeholder="Opzionale"></div>
+    <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="sosp-copie-${destId}-${aId}" min="1" placeholder="≥15"></div>
+    <div class="field"><label>Sconto occ.</label><input type="number" id="sosp-sconto-${destId}-${aId}" min="0" max="99" placeholder="%"></div>
+    <button class="del-art" onclick="removeSospArt(${destId},${aId})">✕</button>`;
+  document.getElementById(`sosp-art-list-${destId}`).appendChild(row);
+}
+
+function removeSospArt(dId, aId) { const l = document.getElementById(`sosp-art-list-${dId}`); if (l.children.length <= 1) return; document.getElementById(`sosp-art-${dId}-${aId}`).remove(); }
+function removeSospDest(id) { if (document.querySelectorAll('#sosp-dest-container .dest-block').length <= 1) return; document.getElementById(`sosp-dest-${id}`).remove(); }
+function toggleSospAlt(id) { document.getElementById(`sosp-alt-block-${id}`).style.display = document.getElementById(`sosp-chk-alt-${id}`).checked ? 'block' : 'none'; }
+
+function resetSospForm() {
+  sospDestCounter = 0; sospArtCounters = {};
+  document.getElementById('sosp-dest-container').innerHTML = '';
+  document.getElementById('sosp-nota').value = '';
+  addSospDest();
+}
+
+function raccogliSospDestinatari() {
+  let valid = true;
+  const destinatari = [];
+  document.querySelectorAll('#sosp-dest-container .dest-block').forEach(block => {
+    const id = block.id.replace('sosp-dest-', '');
+    const cod = document.getElementById(`sosp-cod-${id}`).value.trim();
+    if (!cod) { document.getElementById(`sosp-cod-${id}`).classList.add('err'); valid = false; }
+    const articoli = [];
+    block.querySelectorAll('.art-row').forEach(row => {
+      const rid = row.id.split('-').pop();
+      const eanEl = document.getElementById(`sosp-ean-${id}-${rid}`);
+      const copieEl = document.getElementById(`sosp-copie-${id}-${rid}`);
+      if (!eanEl || !copieEl) return;
+      const ean = eanEl.value.trim(), copie = parseInt(copieEl.value) || 0;
+      if (!ean) { eanEl.classList.add('err'); valid = false; }
+      if (!copie) { copieEl.classList.add('err'); valid = false; }
+      articoli.push({ ean, titolo: document.getElementById(`sosp-titolo-${id}-${rid}`)?.value?.trim() || '', copie, sconto: document.getElementById(`sosp-sconto-${id}-${rid}`)?.value || '' });
+    });
+    const dest = { cod_cliente: cod, data_consegna: document.getElementById(`sosp-data-${id}`).value, nord: document.getElementById(`sosp-nord-${id}`).value.trim(), partita: document.getElementById(`sosp-partita-${id}`).value.trim(), articoli, dest_alternativa: null };
+    if (document.getElementById(`sosp-chk-alt-${id}`).checked) {
+      const rs = document.getElementById(`sosp-alt-rs-${id}`).value.trim(), ind = document.getElementById(`sosp-alt-ind-${id}`).value.trim(), loc = document.getElementById(`sosp-alt-loc-${id}`).value.trim(), cap = document.getElementById(`sosp-alt-cap-${id}`).value.trim(), prov = document.getElementById(`sosp-alt-prov-${id}`).value.trim();
+      if (!rs || !ind || !loc || !cap || !prov) valid = false;
+      dest.dest_alternativa = { ragione_sociale: rs, indirizzo: ind, localita: loc, cap, provincia: prov.toUpperCase() };
+    }
+    destinatari.push(dest);
+  });
+  return { valid, destinatari };
+}
+
+async function salvaSospeso() {
+  const alertEl = document.getElementById('sosp-alert');
+  alertEl.innerHTML = '';
+  const { valid, destinatari } = raccogliSospDestinatari();
+  if (!valid) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Verifica i campi obbligatori.</div>'; return; }
+  const nota = document.getElementById('sosp-nota').value.trim();
+  const { error } = await sb.from('ordini_sospesi').insert({ creato_da: currentUser.email, nota, destinatari, trasferito: false });
+  if (error) { alertEl.innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`; return; }
+  alertEl.innerHTML = '<div class="alert alert-success">✓ Ordine salvato come sospeso.</div>';
+  resetSospForm();
+  loadSospesi();
+  setTimeout(() => { alertEl.innerHTML = ''; }, 3000);
+}
+
+async function loadSospesi() {
+  const list = document.getElementById('sosp-list');
+  list.innerHTML = '<div class="alert alert-info">Caricamento…</div>';
+  const { data, error } = await sb.from('ordini_sospesi').select('*').eq('trasferito', false).order('data_creazione', { ascending: false });
+  if (error) { list.innerHTML = `<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
+  const label = document.getElementById('sosp-count-label');
+  if (!data?.length) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">✅</div><p>Nessun ordine sospeso attivo.</p></div>';
+    label.textContent = '';
+    return;
+  }
+  label.textContent = `${data.length} sospeso/i attivi`;
+  list.innerHTML = data.map(r => {
+    const dt = new Date(r.data_creazione);
+    const dStr = dt.toLocaleDateString('it-IT'), oStr = dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    const destsHTML = (r.destinatari || []).map(d => {
+      const arts = (d.articoli || []).map(a => `<tr><td>${a.ean}</td><td>${a.titolo || '—'}</td><td class="cp">${a.copie}</td><td>${a.sconto || '—'}</td></tr>`).join('');
+      return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span>${d.data_consegna ? `<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>` : ''}</div><table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th></tr></thead><tbody>${arts}</tbody></table></div>`;
+    }).join('');
+    const notaHTML = r.nota ? `<div class="sosp-nota">📌 ${r.nota}</div>` : '';
+    return `<div class="sosp-card">
+      <div class="sosp-head">
+        <div class="sosp-meta">
+          <span class="tag-sosp">⏸ Sospeso</span>
+          <span class="tag tag-ag">${r.creato_da}</span>
+          <span class="tag-dt">${dStr} ${oStr}</span>
+        </div>
+        <div style="display:flex;gap:.4rem">
+          <button class="btn-trasferisci" onclick="trasferisciSospeso('${r.id}')">▶ Trasferisci al turno</button>
+          <button class="btn-del-sosp" onclick="eliminaSospeso('${r.id}')">✕</button>
+        </div>
+      </div>
+      <div class="sosp-body">${notaHTML}${destsHTML}</div>
+    </div>`;
+  }).join('');
+}
+
+async function trasferisciSospeso(id) {
+  const { data, error } = await sb.from('ordini_sospesi').select('*').eq('id', id).single();
+  if (error || !data) { alert('Errore nel caricamento del sospeso.'); return; }
+  const turno = getTurno();
+  // Inserisce in ordini_urgenti
+  const { error: insErr } = await sb.from('ordini_urgenti').insert({
+    agente: data.creato_da,
+    turno,
+    data_richiesta: new Date().toISOString(),
+    destinatari: data.destinatari,
+    esportato: false
+  });
+  if (insErr) { alert(`Errore nel trasferimento: ${insErr.message}`); return; }
+  // Marca come trasferito
+  await sb.from('ordini_sospesi').update({
+    trasferito: true,
+    data_trasferimento: new Date().toISOString(),
+    trasferito_da: currentUser.email,
+    turno_trasferimento: turno
+  }).eq('id', id);
+
+  document.getElementById('sosp-alert').innerHTML = `<div class="alert alert-success">✓ Ordine trasferito al turno <strong>${turno}</strong>.</div>`;
+  loadSospesi();
+  loadBozze();
+  setTimeout(() => { document.getElementById('sosp-alert').innerHTML = ''; }, 4000);
+}
+
+async function eliminaSospeso(id) {
+  if (!confirm('Eliminare definitivamente questo sospeso?')) return;
+  const { error } = await sb.from('ordini_sospesi').delete().eq('id', id);
+  if (error) { alert(`Errore: ${error.message}`); return; }
+  loadSospesi();
+}
+
+// Popup sospesi per admin all'accesso
+async function checkSospesiPopup() {
+  if (!isAdmin) return;
+  const { data, error } = await sb.from('ordini_sospesi').select('id,creato_da,data_creazione,nota,destinatari').eq('trasferito', false);
+  if (error || !data?.length) return;
+  const sub = document.getElementById('modal-sosp-sub');
+  sub.textContent = `Hai ${data.length} ordine/i sospeso/i in attesa di trasferimento.`;
+  const listEl = document.getElementById('modal-sosp-list');
+  listEl.innerHTML = data.map(r => {
+    const dt = new Date(r.data_creazione).toLocaleDateString('it-IT');
+    const nDest = (r.destinatari || []).length;
+    const nArt = (r.destinatari || []).reduce((s, d) => s + (d.articoli || []).length, 0);
+    return `<div class="modal-item"><strong>${r.creato_da} — ${dt}</strong>${r.nota ? `📌 ${r.nota} — ` : ''}${nDest} dest. · ${nArt} art.</div>`;
+  }).join('');
+  document.getElementById('modal-sospesi').style.display = 'flex';
+}
+
+function chiudiModalSospesi() {
+  document.getElementById('modal-sospesi').style.display = 'none';
+}
+
 </script>
 </body>
 </html>
