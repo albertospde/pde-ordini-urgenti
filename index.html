@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ordini Urgenti — PDE</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
 // ── CANCELLA RICHIESTA ────────────────────────────────────────
 async function cancellaRichiesta(id) {
-  if (!confirm('Sei sicuro di voler cancellare questa richiesta? L\'operazione non può essere annullata.')) return;
+  if (!confirm('Sei sicuro di voler cancellare questa richiesta? L'operazione non può essere annullata.')) return;
   const { error } = await sb.from('ordini_urgenti').delete().eq('id', id).eq('agente', currentUser.email);
   if (error) {
     document.getElementById('global-alert').innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`;
