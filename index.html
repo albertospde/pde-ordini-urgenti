@@ -339,6 +339,8 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
         </select>
         <input type="date" id="filter-data" onchange="loadStorico()">
         <input type="text" id="filter-agente" placeholder="Filtra agente…" oninput="loadStorico()" style="width:150px;display:none">
+        <input type="text" id="filter-cod" placeholder="Cod. cliente…" oninput="loadStorico()" style="width:130px">
+        <input type="text" id="filter-ean" placeholder="EAN…" oninput="loadStorico()" style="width:140px">
       </div>
       <div id="storico-list"></div>
     </div>
@@ -583,6 +585,7 @@ async function startEdit(id) {
       document.getElementById(`alt-loc-${did}`).value=dest.dest_alternativa.localita||'';
       document.getElementById(`alt-cap-${did}`).value=dest.dest_alternativa.cap||'';
       document.getElementById(`alt-prov-${did}`).value=dest.dest_alternativa.provincia||'';
+      document.getElementById(`alt-tel-${did}`).value=dest.dest_alternativa.telefono||'';
     }
   }
 
@@ -617,7 +620,7 @@ function destBlockHTML(id) {
     </div>
     <div class="g2" style="margin-bottom:.65rem">
       <div class="field"><label>N. Ord. Cliente / Nota <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 30)</small></label><input type="text" id="nord-${id}" maxlength="30" placeholder="Nota opzionale"></div>
-      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO)</small></label><input type="text" id="partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
+      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO, EDITORE = Partita Editore)</small></label><input type="text" id="partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
     </div>
     <div style="margin-bottom:.5rem">
       <div style="font-size:.67rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">Articoli <span class="req">*</span></div>
@@ -636,6 +639,7 @@ function destBlockHTML(id) {
             <div class="field"><label>CAP <span class="req">*</span></label><input type="text" id="alt-cap-${id}" placeholder="00000" maxlength="5"></div>
             <div class="field"><label>Prov. <span class="req">*</span></label><input type="text" id="alt-prov-${id}" placeholder="MI" maxlength="2" style="text-transform:uppercase"></div>
           </div>
+          <div class="field gfull" style="margin-top:.6rem"><label>Telefono <span class="req">*</span></label><input type="text" id="alt-tel-${id}" maxlength="20" placeholder="es. 02 1234567"></div>
         </div>
       </div>
     </div>
@@ -659,7 +663,7 @@ function addArticoloRaw(destId, aId) {
   row.innerHTML=`
     <div class="field"><label>EAN A13 <span class="req">*</span></label><input type="text" id="ean-${destId}-${aId}" placeholder="9788812345678" maxlength="13" oninput="this.classList.remove('err')"></div>
     <div class="field"><label>Titolo / Nota</label><input type="text" id="titolo-${destId}-${aId}" placeholder="Opzionale"></div>
-    <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="copie-${destId}-${aId}" min="1" placeholder="≥15" oninput="checkCopie(this)"></div>
+    <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="copie-${destId}-${aId}" min="5" placeholder="Copie" oninput="checkCopie(this)"></div>
     <div class="field"><label>Sconto occ.</label><input type="number" id="sconto-${destId}-${aId}" min="0" max="99" placeholder="%"></div>
     <div class="field"><label>Pag. occ.</label><input type="number" id="pag-${destId}-${aId}" min="0" max="999" placeholder="gg"></div>
     <button class="del-art" onclick="removeArticolo(${destId},${aId})" title="Rimuovi">✕</button>`;
@@ -674,7 +678,8 @@ function addArticolo(destId) {
 
 function checkCopie(el){
   el.classList.remove('err','warn-inp');
-  if(el.value>0&&el.value<15) el.classList.add('warn-inp');
+  const v=parseInt(el.value)||0;
+  if(v>0&&v<15) el.classList.add('warn-inp');
 }
 function removeArticolo(dId,aId){ const l=document.getElementById(`art-list-${dId}`); if(l.children.length<=1) return; document.getElementById(`art-${dId}-${aId}`).remove(); }
 function removeDest(id){ if(document.querySelectorAll('#destinatari-container .dest-block').length<=1) return; document.getElementById(`dest-${id}`).remove(); updateDestCounter(); }
@@ -699,15 +704,16 @@ function raccogliDestinatari() {
       if(!eanEl||!copieEl) return;
       const ean=eanEl.value.trim(), copie=parseInt(copieEl.value)||0;
       if(!ean){eanEl.classList.add('err');valid=false;}
-      if(!copie){copieEl.classList.add('err');valid=false;}
+      if(copie<5){copieEl.classList.add('err');valid=false;}
       if(copie>0&&copie<15) warnings++;
       articoli.push({ean,titolo:document.getElementById(`titolo-${id}-${rid}`)?.value?.trim()||'',copie,sconto:document.getElementById(`sconto-${id}-${rid}`)?.value||'',pag:document.getElementById(`pag-${id}-${rid}`)?.value||''});
     });
     const dest={cod_cliente:cod,data_consegna:document.getElementById(`data-${id}`).value,nord:document.getElementById(`nord-${id}`).value.trim(),partita:document.getElementById(`partita-${id}`).value.trim(),articoli,dest_alternativa:null};
     if(document.getElementById(`chk-alt-${id}`).checked){
       const rs=document.getElementById(`alt-rs-${id}`).value.trim(),ind=document.getElementById(`alt-ind-${id}`).value.trim(),loc=document.getElementById(`alt-loc-${id}`).value.trim(),cap=document.getElementById(`alt-cap-${id}`).value.trim(),prov=document.getElementById(`alt-prov-${id}`).value.trim();
-      if(!rs||!ind||!loc||!cap||!prov) valid=false;
-      dest.dest_alternativa={ragione_sociale:rs,indirizzo:ind,localita:loc,cap,provincia:prov.toUpperCase()};
+      const tel=document.getElementById(`alt-tel-${id}`).value.trim();
+      if(!rs||!ind||!loc||!cap||!prov||!tel) valid=false;
+      dest.dest_alternativa={ragione_sociale:rs,indirizzo:ind,localita:loc,cap,provincia:prov.toUpperCase(),telefono:tel};
     }
     destinatari.push(dest);
   });
@@ -772,15 +778,21 @@ async function loadStorico(){
   const turno=document.getElementById('filter-turno').value;
   const data=document.getElementById('filter-data').value;
   const agente=document.getElementById('filter-agente').value.trim();
-  let q=sb.from('ordini_urgenti').select('*').order('data_richiesta',{ascending:false}).limit(100);
+  const codFilter=document.getElementById('filter-cod').value.trim().toLowerCase();
+  const eanFilter=document.getElementById('filter-ean').value.trim().toLowerCase();
+  let q=sb.from('ordini_urgenti').select('*').order('data_richiesta',{ascending:false}).limit(200);
   if(turno) q=q.eq('turno',turno);
   if(data)  q=q.gte('data_richiesta',data+'T00:00:00').lte('data_richiesta',data+'T23:59:59');
   if(!isAdmin) q=q.eq('agente',currentUser.email);
   else if(agente) q=q.ilike('agente',`%${agente}%`);
   const {data:rows,error}=await q;
   if(error){list.innerHTML=`<div class="alert alert-error">Errore: ${error.message}</div>`;return;}
-  if(!rows?.length){list.innerHTML='<div class="empty-state"><div class="icon">📋</div><p>Nessuna richiesta trovata.</p></div>';return;}
-  list.innerHTML=rows.map(r=>{
+  // Filtro client-side per cod e ean (sono in JSONB)
+  let filtered=rows||[];
+  if(codFilter) filtered=filtered.filter(r=>(r.destinatari||[]).some(d=>d.cod_cliente?.toLowerCase().includes(codFilter)));
+  if(eanFilter) filtered=filtered.filter(r=>(r.destinatari||[]).some(d=>(d.articoli||[]).some(a=>a.ean?.toLowerCase().includes(eanFilter))));
+  if(!filtered.length){list.innerHTML='<div class="empty-state"><div class="icon">📋</div><p>Nessuna richiesta trovata.</p></div>';return;}
+  list.innerHTML=filtered.map(r=>{
     const dt=new Date(r.data_richiesta);
     const dStr=dt.toLocaleDateString('it-IT'),oStr=dt.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
     const tc=turnoClass(r.turno);
@@ -847,7 +859,7 @@ async function loadEsporta(){
       (d.articoli||[]).forEach(a=>{
         let dc='';
         if(d.data_consegna){const p=d.data_consegna.split('-');if(p.length===3)dc=p[2]+p[1]+p[0];}
-        esportaRows.push({cod:d.cod_cliente,ean:a.ean,copie:a.copie,sconto:a.sconto||'',pag:a.pag||'',nord:d.nord||'',data_cons:dc,partita:d.partita||'',alt_rs:d.dest_alternativa?.ragione_sociale||'',alt_ind:d.dest_alternativa?.indirizzo||'',alt_loc:d.dest_alternativa?.localita||'',alt_cap:d.dest_alternativa?.cap||'',alt_prov:d.dest_alternativa?.provincia||'',agente:r.agente,titolo:a.titolo||''});
+        esportaRows.push({cod:d.cod_cliente,ean:a.ean,copie:a.copie,sconto:a.sconto||'',pag:a.pag||'',nord:d.nord||'',data_cons:dc,partita:d.partita||'',alt_rs:d.dest_alternativa?.ragione_sociale||'',alt_ind:d.dest_alternativa?.indirizzo||'',alt_loc:d.dest_alternativa?.localita||'',alt_cap:d.dest_alternativa?.cap||'',alt_prov:d.dest_alternativa?.provincia||'',alt_tel:d.dest_alternativa?.telefono||'',agente:r.agente,titolo:a.titolo||''});
       });
     });
   });
@@ -891,7 +903,7 @@ async function esportaExcel(){
   esportaRows.forEach(r=>wsData.push([
     r.cod, r.ean, r.copie, r.sconto, r.pag, r.nord,
     r.data_cons, r.partita,
-    r.alt_rs, r.alt_ind, r.alt_loc, r.alt_cap, r.alt_prov,
+    r.alt_rs, r.alt_ind, r.alt_loc, r.alt_cap, r.alt_prov, r.alt_tel,
     'servizioclienti@pde.it',
     r.agente,   // CC = mail di chi ha inserito
     ''
@@ -955,7 +967,7 @@ function addSospDest() {
     </div>
     <div class="g2" style="margin-bottom:.65rem">
       <div class="field"><label>N. Ord. Cliente / Nota <small style="text-transform:none;letter-spacing:0;font-weight:400">(max 30)</small></label><input type="text" id="sosp-nord-${id}" maxlength="30" placeholder="Nota opzionale"></div>
-      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO)</small></label><input type="text" id="sosp-partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
+      <div class="field"><label>Partita <small style="text-transform:none;letter-spacing:0;font-weight:400">(vuoto = LIBERO, EDITORE = Partita Editore)</small></label><input type="text" id="sosp-partita-${id}" placeholder="Lascia vuoto per LIBERO"></div>
     </div>
     <div style="margin-bottom:.5rem">
       <div style="font-size:.67rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem">Articoli <span class="req">*</span></div>
@@ -974,6 +986,7 @@ function addSospDest() {
             <div class="field"><label>CAP <span class="req">*</span></label><input type="text" id="sosp-alt-cap-${id}" placeholder="00000" maxlength="5"></div>
             <div class="field"><label>Prov. <span class="req">*</span></label><input type="text" id="sosp-alt-prov-${id}" placeholder="MI" maxlength="2" style="text-transform:uppercase"></div>
           </div>
+          <div class="field gfull" style="margin-top:.6rem"><label>Telefono <span class="req">*</span></label><input type="text" id="sosp-alt-tel-${id}" maxlength="20" placeholder="es. 02 1234567"></div>
         </div>
       </div>
     </div>
@@ -1028,13 +1041,84 @@ function raccogliSospDestinatari() {
     });
     const dest = { cod_cliente: cod, data_consegna: document.getElementById(`sosp-data-${id}`).value, nord: document.getElementById(`sosp-nord-${id}`).value.trim(), partita: document.getElementById(`sosp-partita-${id}`).value.trim(), articoli, dest_alternativa: null };
     if (document.getElementById(`sosp-chk-alt-${id}`).checked) {
-      const rs = document.getElementById(`sosp-alt-rs-${id}`).value.trim(), ind = document.getElementById(`sosp-alt-ind-${id}`).value.trim(), loc = document.getElementById(`sosp-alt-loc-${id}`).value.trim(), cap = document.getElementById(`sosp-alt-cap-${id}`).value.trim(), prov = document.getElementById(`sosp-alt-prov-${id}`).value.trim();
-      if (!rs || !ind || !loc || !cap || !prov) valid = false;
-      dest.dest_alternativa = { ragione_sociale: rs, indirizzo: ind, localita: loc, cap, provincia: prov.toUpperCase() };
+      const rs = document.getElementById(`sosp-alt-rs-${id}`).value.trim(), ind = document.getElementById(`sosp-alt-ind-${id}`).value.trim(), loc = document.getElementById(`sosp-alt-loc-${id}`).value.trim(), cap = document.getElementById(`sosp-alt-cap-${id}`).value.trim(), prov = document.getElementById(`sosp-alt-prov-${id}`).value.trim(), tel = document.getElementById(`sosp-alt-tel-${id}`).value.trim();
+      if (!rs || !ind || !loc || !cap || !prov || !tel) valid = false;
+      dest.dest_alternativa = { ragione_sociale: rs, indirizzo: ind, localita: loc, cap, provincia: prov.toUpperCase(), telefono: tel };
     }
     destinatari.push(dest);
   });
   return { valid, destinatari };
+}
+
+let editingSospId = null;
+
+async function editSospeso(id) {
+  const { data, error } = await sb.from('ordini_sospesi').select('*').eq('id', id).single();
+  if (error || !data) { alert('Errore nel caricamento del sospeso.'); return; }
+  editingSospId = id;
+  sospDestCounter = 0; sospArtCounters = {};
+  document.getElementById('sosp-dest-container').innerHTML = '';
+  for (const dest of data.destinatari) {
+    const did = ++sospDestCounter;
+    sospArtCounters[did] = 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'dest-block'; wrap.id = `sosp-dest-${did}`;
+    // Usa addSospDest per generare l'HTML poi sovrascrive i valori
+    const tmp = sospDestCounter;
+    sospDestCounter = did - 1;
+    addSospDest();
+    sospDestCounter = tmp;
+    const actualId = document.querySelectorAll('#sosp-dest-container .dest-block').length;
+    const bid = actualId;
+    document.getElementById(`sosp-cod-${bid}`).value = dest.cod_cliente || '';
+    document.getElementById(`sosp-data-${bid}`).value = dest.data_consegna || '';
+    document.getElementById(`sosp-nord-${bid}`).value = dest.nord || '';
+    document.getElementById(`sosp-partita-${bid}`).value = dest.partita || '';
+    // Gli articoli sono già stati aggiunti da addSospDest (1 vuoto), rimuovili e riempi
+    document.getElementById(`sosp-art-list-${bid}`).innerHTML = '';
+    sospArtCounters[bid] = 0;
+    for (const art of dest.articoli) {
+      const aId = ++sospArtCounters[bid];
+      const row = document.createElement('div');
+      row.className = 'art-row'; row.id = `sosp-art-${bid}-${aId}`;
+      row.innerHTML = `
+        <div class="field"><label>EAN A13 <span class="req">*</span></label><input type="text" id="sosp-ean-${bid}-${aId}" placeholder="9788812345678" maxlength="13"></div>
+        <div class="field"><label>Titolo / Nota</label><input type="text" id="sosp-titolo-${bid}-${aId}" placeholder="Opzionale"></div>
+        <div class="field"><label>Copie <span class="req">*</span></label><input type="number" id="sosp-copie-${bid}-${aId}" min="5" placeholder="Copie"></div>
+        <div class="field"><label>Sconto occ.</label><input type="number" id="sosp-sconto-${bid}-${aId}" min="0" max="99" placeholder="%"></div>
+        <div class="field"><label>Pag. occ.</label><input type="number" id="sosp-pag-${bid}-${aId}" min="0" max="999" placeholder="gg"></div>
+        <button class="del-art" onclick="removeSospArt(${bid},${aId})">✕</button>`;
+      document.getElementById(`sosp-art-list-${bid}`).appendChild(row);
+      document.getElementById(`sosp-ean-${bid}-${aId}`).value = art.ean || '';
+      document.getElementById(`sosp-titolo-${bid}-${aId}`).value = art.titolo || '';
+      document.getElementById(`sosp-copie-${bid}-${aId}`).value = art.copie || '';
+      document.getElementById(`sosp-sconto-${bid}-${aId}`).value = art.sconto || '';
+      document.getElementById(`sosp-pag-${bid}-${aId}`).value = art.pag || '';
+    }
+    if (dest.dest_alternativa) {
+      document.getElementById(`sosp-chk-alt-${bid}`).checked = true;
+      toggleSospAlt(bid);
+      document.getElementById(`sosp-alt-rs-${bid}`).value = dest.dest_alternativa.ragione_sociale || '';
+      document.getElementById(`sosp-alt-ind-${bid}`).value = dest.dest_alternativa.indirizzo || '';
+      document.getElementById(`sosp-alt-loc-${bid}`).value = dest.dest_alternativa.localita || '';
+      document.getElementById(`sosp-alt-cap-${bid}`).value = dest.dest_alternativa.cap || '';
+      document.getElementById(`sosp-alt-prov-${bid}`).value = dest.dest_alternativa.provincia || '';
+      document.getElementById(`sosp-alt-tel-${bid}`).value = dest.dest_alternativa.telefono || '';
+    }
+  }
+  document.getElementById('sosp-nota').value = data.nota || '';
+  // Banner modifica
+  const alertEl = document.getElementById('sosp-alert');
+  alertEl.innerHTML = '<div class="alert alert-warn">✏️ Stai modificando un sospeso esistente — <button onclick="cancelEditSosp()" style="background:none;border:1px solid rgba(245,166,35,.4);color:var(--warn);border-radius:5px;padding:.15rem .5rem;cursor:pointer;font-family:inherit;font-size:.75rem;">✕ Annulla</button></div>';
+  document.querySelector('#tab-sospesi .btn[onclick="salvaSospeso()"]').textContent = '💾 Salva modifiche';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEditSosp() {
+  editingSospId = null;
+  document.getElementById('sosp-alert').innerHTML = '';
+  document.querySelector('#tab-sospesi .btn[onclick="salvaSospeso()"]').textContent = 'Salva come sospeso';
+  resetSospForm();
 }
 
 async function salvaSospeso() {
@@ -1043,9 +1127,18 @@ async function salvaSospeso() {
   const { valid, destinatari } = raccogliSospDestinatari();
   if (!valid) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Verifica i campi obbligatori.</div>'; return; }
   const nota = document.getElementById('sosp-nota').value.trim();
-  const { error } = await sb.from('ordini_sospesi').insert({ creato_da: currentUser.email, nota, destinatari, trasferito: false });
+  let error;
+  if (editingSospId) {
+    const res = await sb.from('ordini_sospesi').update({ nota, destinatari }).eq('id', editingSospId);
+    error = res.error;
+  } else {
+    const res = await sb.from('ordini_sospesi').insert({ creato_da: currentUser.email, nota, destinatari, trasferito: false });
+    error = res.error;
+  }
   if (error) { alertEl.innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`; return; }
-  alertEl.innerHTML = '<div class="alert alert-success">✓ Ordine salvato come sospeso.</div>';
+  alertEl.innerHTML = editingSospId ? '<div class="alert alert-success">✓ Sospeso aggiornato.</div>' : '<div class="alert alert-success">✓ Ordine salvato come sospeso.</div>';
+  editingSospId = null;
+  document.querySelector('#tab-sospesi .btn[onclick="salvaSospeso()"]').textContent = 'Salva come sospeso';
   resetSospForm();
   loadSospesi();
   setTimeout(() => { alertEl.innerHTML = ''; }, 3000);
@@ -1079,6 +1172,7 @@ async function loadSospesi() {
           <span class="tag-dt">${dStr} ${oStr}</span>
         </div>
         <div style="display:flex;gap:.4rem">
+          <button class="btn-edit" onclick="editSospeso('${r.id}')">✏ Modifica</button>
           <button class="btn-trasferisci" onclick="trasferisciSospeso('${r.id}')">Trasferisci negli invii</button>
           <button class="btn-del-sosp" onclick="eliminaSospeso('${r.id}')">✕</button>
         </div>
