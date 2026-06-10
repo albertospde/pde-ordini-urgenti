@@ -1627,7 +1627,7 @@ async function salvaDiretto() {
 let direttiAllRows = []; // cache locale
 
 function direttiCardHTML(r, showMailBtn) {
-  const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it';
+  const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it,ddt@pde.it';
   const dt = new Date(r.data_richiesta).toLocaleDateString('it-IT');
   const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
   const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
