@@ -1627,7 +1627,7 @@ async function salvaDiretto() {
 let direttiAllRows = []; // cache locale
 
 function direttiCardHTML(r, showMailBtn) {
-  const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it,ddt@pde.it';
+  const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it';
   const dt = new Date(r.data_richiesta).toLocaleDateString('it-IT');
   const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
   const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
@@ -1656,7 +1656,7 @@ CAP / Città: ${r.cap || ''} ${r.citta || ''} (${r.provincia || ''})
 Inserita da: ${r.agente}
 `);
   const oggetto = encodeURIComponent(`Richiesta Diretto — ${r.editore_nome} (${r.editore_cod})`);
-  const ccAll = encodeURIComponent(`${CC_FISSI},${r.agente}`);
+  const ccAll = encodeURIComponent(`${CC_FISSI},${r.agente},${currentUser.email}`);
   const toEmail = r.editore_email || '';
   const mailtoHref = `mailto:${toEmail}?subject=${oggetto}&cc=${ccAll}&body=${corpo}`;
   const inviatoTag = r.inviato ? `<span class="tag tag-exp">✓ Inviata</span>` : '';
@@ -1684,7 +1684,7 @@ Inserita da: ${r.agente}
       </div>
       <div style="font-size:.75rem;color:var(--warn);margin-bottom:.35rem">${r.motivo}</div>
       <div style="font-size:.74rem;color:var(--testo-dim)">📦 <strong style="color:var(--testo)">${r.nome_libreria||'—'}</strong>${r.cod_meli ? ` <span style="font-family:'DM Mono',monospace;color:var(--azzurro);font-size:.7rem">${r.cod_meli}</span>` : ''} — ${[r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ')}</div>
-      <div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 ${toEmail ? 'A: ' + toEmail + ' — ' : ''}CC: ${CC_FISSI}, ${r.agente}</div>
+      <div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 ${toEmail ? 'A: ' + toEmail + ' — ' : ''}CC: ${CC_FISSI}, ${r.agente}${r.agente !== currentUser.email ? ', ' + currentUser.email : ''}</div>
     </div>
   </div>`;
 }
