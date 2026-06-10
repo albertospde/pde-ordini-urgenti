@@ -1339,38 +1339,152 @@ async function cancellaRichiesta(id) {
 
 // ── DIRETTI EDITORE ──────────────────────────────────────────
 // Lista editori (caricata da Supabase al primo accesso alla tab)
-let editoriList = [];
+// ── EDITORI (stesso array di Note di Credito) ─────────────────
+const EDITORI_BUILTIN=[
+  {codice:'B44',nome:'ABOCA EDIZIONI'},
+  {codice:'299',nome:'AD EST DELL\'EQUATORE'},
+  {codice:'A94',nome:'ADELPHI EDIZIONI'},
+  {codice:'290',nome:'ALDENIA EDIZIONI'},
+  {codice:'305',nome:'ALPHA TEST'},
+  {codice:'12',nome:'ANGELO LONGO EDITORE'},
+  {codice:'103',nome:'ARGO EDITRICE SRLS'},
+  {codice:'934',nome:'ARKEIOS - ED. MEDITERRANEE'},
+  {codice:'D98',nome:'ARPA EDIZIONI'},
+  {codice:'386',nome:'AVAGLIANO EDITORE SRL'},
+  {codice:'134',nome:'BALDINI+CASTOLDI'},
+  {codice:'853',nome:'BEAT MINIMUM FAX'},
+  {codice:'738',nome:'BEAT NERI POZZA'},
+  {codice:'782',nome:'BEAT NOTTETEMPO'},
+  {codice:'786',nome:'BEAT NUOVA FRONTIERA'},
+  {codice:'766',nome:'BEAT SIRONI - ALPHA TEST'},
+  {codice:'753',nome:'BECCO GIALLO'},
+  {codice:'B14',nome:'CAIRO BIS'},
+  {codice:'A54',nome:'CAIRO EDITORE'},
+  {codice:'C64',nome:'CALLIGRAM SA'},
+  {codice:'522',nome:'CAPRICORNO'},
+  {codice:'662',nome:'CARBONIO EDITORE'},
+  {codice:'747',nome:'CENTO AUTORI EDIZIONI'},
+  {codice:'532',nome:'CINETECA DI BOLOGNA'},
+  {codice:'366',nome:'CLEAN SCARL'},
+  {codice:'945',nome:'COLOMBO DUEMILA'},
+  {codice:'137',nome:'COLONNESE EDITORE'},
+  {codice:'531',nome:'COMICON VISIONA'},
+  {codice:'456',nome:'CORTINA MED.'},
+  {codice:'D65',nome:'DARIO CIMORELLI EDITORE'},
+  {codice:'72',nome:'DEL VECCHIO'},
+  {codice:'952',nome:'DONZELLI EDITORE'},
+  {codice:'A61',nome:'EDITORIALE GIORGIO MONDADORI'},
+  {codice:'941',nome:'EDITRICE ANTENORE'},
+  {codice:'995',nome:'EDIZIONI AMRITA'},
+  {codice:'773',nome:'EDIZIONI CORSARE'},
+  {codice:'776',nome:'EDIZIONI DEDALO'},
+  {codice:'A58',nome:'EDIZIONI DEL VERRI'},
+  {codice:'37',nome:'EDIZIONI ETS'},
+  {codice:'64',nome:'EDIZIONI LAVORO'},
+  {codice:'58',nome:'EDIZIONI MEDITERRANEE'},
+  {codice:'919',nome:'EDIZIONI RIZA'},
+  {codice:'692',nome:'EFFIGI EDIZIONI'},
+  {codice:'138',nome:'ELEUTHERA EDITRICE'},
+  {codice:'534',nome:'EMMEBI EDIZIONI'},
+  {codice:'A59',nome:'ESPRESS EDIZIONI'},
+  {codice:'296',nome:'EUM CENTRO ED. UNIV. MACERATA'},
+  {codice:'751',nome:'FANDANGO LIBRI  SRL'},
+  {codice:'112',nome:'FAZI EDITORE S.R.L.'},
+  {codice:'724',nome:'FEDERIGHI EDITORI'},
+  {codice:'364',nome:'FELICI EDITORE - ISTOS'},
+  {codice:'D92',nome:'FUORI SCENA'},
+  {codice:'118',nome:'FUTURA S.R.L.'},
+  {codice:'C85',nome:'GALLUCCI BALLOON'},
+  {codice:'C52',nome:'GALLUCCI BROS'},
+  {codice:'502',nome:'GALLUCCI CENTAURIA'},
+  {codice:'510',nome:'GALLUCCI EDITORE  SRL'},
+  {codice:'C48',nome:'GALLUCCI SPIGA'},
+  {codice:'740',nome:'GIANO EDITORE  SRL'},
+  {codice:'AC7',nome:'GLIFI GALLUCCI'},
+  {codice:'B59',nome:'GUERINI E ASSOCIATI'},
+  {codice:'B58',nome:'GUERINI NEXT'},
+  {codice:'763',nome:'HARPERCOLLINS ITALIA'},
+  {codice:'308',nome:'HERMES - ED. MEDITERRANEE'},
+  {codice:'428',nome:'IL  SAGGIATORE'},
+  {codice:'D95',nome:'IL PELLEGRINO EDITORE'},
+  {codice:'937',nome:'ILISSO EDIZIONI'},
+  {codice:'320',nome:'IST.  ENCICLOP.  ITA. TRECCANI'},
+  {codice:'73',nome:'KALANDRAKA'},
+  {codice:'909',nome:'KENNESS PUBLISHING'},
+  {codice:'C73',nome:'KM EDIZIONI DI ERIKA MARCHETTI'},
+  {codice:'277',nome:'LA NAVE DI TESEO'},
+  {codice:'A86',nome:'LA NAVE DI TESEO +'},
+  {codice:'B81',nome:'LA NAVE DI TESEO O'},
+  {codice:'710',nome:'LA NUOVA FRONTIERA'},
+  {codice:'C72',nome:'LA REVUE'},
+  {codice:'108',nome:'LA SAPIENZA UNIV.STUDI ROMA'},
+  {codice:'671',nome:'LA TARTARUGA'},
+  {codice:'935',nome:'LAPIS EDIZIONI'},
+  {codice:'C79',nome:'LAW CAMP - ALPHA TEST'},
+  {codice:'333',nome:'LIBRIDO GALLUCCI'},
+  {codice:'B25',nome:'LIBRIVOLANTI - GR ED LE IMPRONTE'},
+  {codice:'B60',nome:'LOG EDIZIONI'},
+  {codice:'465',nome:'MANNI EDITORI'},
+  {codice:'780',nome:'MARLIN EDITORE'},
+  {codice:'347',nome:'MASSARI EDITORE'},
+  {codice:'854',nome:'METROPOLI D\'ASIA'},
+  {codice:'568',nome:'MINIMUM FAX'},
+  {codice:'AD6',nome:'MOEBIUS'},
+  {codice:'683',nome:'MONTEPARMASERVIZI S.R.L.'},
+  {codice:'735',nome:'NERI POZZA'},
+  {codice:'741',nome:'NERI POZZA - GIANO'},
+  {codice:'515',nome:'NET'},
+  {codice:'A21',nome:'NEXUS EDIZIONI'},
+  {codice:'A98',nome:'PAESI EDIZIONI'},
+  {codice:'368',nome:'PASSIGLI EDITORE'},
+  {codice:'750',nome:'PLAYGROUND'},
+  {codice:'D52',nome:'POLITI SEGANFREDDO S.R.L.'},
+  {codice:'338',nome:'PRATICHE'},
+  {codice:'D80',nome:'PRETEXT - CENTRO STUDI EDITORIA'},
+  {codice:'455',nome:'RAFFAELLO CORTINA EDITORE'},
+  {codice:'D71',nome:'RE NUDO EDITORE'},
+  {codice:'77',nome:'RTI - RETI TELEVISIVE ITALIANE'},
+  {codice:'565',nome:'SAGGIATORE TASCABILI'},
+  {codice:'C94',nome:'SAVE YOUR BOOK SRL'},
+  {codice:'795',nome:'SCHNELL & STEINER'},
+  {codice:'468',nome:'SHAKE EDIZIONI'},
+  {codice:'437',nome:'SILLABE'},
+  {codice:'821',nome:'SILVANA EDITORIALE S.P.A. 821'},
+  {codice:'326',nome:'SIRONI - ALPHA TEST'},
+  {codice:'487',nome:'SKIRA EDITORE'},
+  {codice:'152',nome:'SOCIALMENTE'},
+  {codice:'A60',nome:'SOLFERINO'},
+  {codice:'992',nome:'STUDIO TESI - ED. MEDITERRANEE'},
+  {codice:'22',nome:'TIWI MINIBOMBO'},
+  {codice:'C45',nome:'TRECCANI DEFINIZIONE'},
+  {codice:'438',nome:'TROPEA - SAGGIATORE'},
+  {codice:'422',nome:'UMBERTO ALLEMANDI'},
+  {codice:'524',nome:'VERDECHIARO EDIZIONI'},
+  {codice:'739',nome:'VIELLA'}
+];
+let editoriList = [...EDITORI_BUILTIN];
 
-async function loadEditori() {
-  if (editoriList.length) return;
-  const { data, error } = await sb.from('diretti_editore_config').select('cod_cliente,ragione_sociale,email').order('ragione_sociale');
-  if (!error && data?.length) editoriList = data;
-}
-
-function showEditoriDrop() {
-  loadEditori().then(() => filterEditori());
-}
+function showEditoriDrop() { filterEditori(); }
 
 function filterEditori() {
   const q = document.getElementById('dir-editore-search').value.toLowerCase();
   const drop = document.getElementById('editori-drop');
   const filtered = editoriList.filter(e =>
-    e.ragione_sociale.toLowerCase().includes(q) || (e.cod_cliente||'').toLowerCase().includes(q)
-  ).slice(0, 40);
+    e.nome.toLowerCase().includes(q) || e.codice.toLowerCase().includes(q)
+  ).slice(0, 50);
   if (!filtered.length) { drop.style.display = 'none'; return; }
   drop.innerHTML = filtered.map(e =>
     `<div style="padding:.45rem .8rem;cursor:pointer;font-size:.84rem;color:var(--testo);border-bottom:1px solid var(--bordo)"
-      onmousedown="selectEditore('${e.cod_cliente}','${e.ragione_sociale.replace(/'/g,"\\'")}','${(e.email||'').replace(/'/g,"\\'")}')">
-      <span style="color:var(--azzurro);font-family:'DM Mono',monospace;font-size:.75rem">${e.cod_cliente}</span>
-      <span style="margin-left:.5rem">${e.ragione_sociale}</span>
+      onmousedown="selectEditore('${e.codice}','${e.nome.replace(/'/g,"\\'")}')">
+      <span style="color:var(--azzurro);font-family:'DM Mono',monospace;font-size:.75rem;margin-right:.5rem">${e.codice}</span>${e.nome}
     </div>`
   ).join('');
   drop.style.display = 'block';
 }
 
-function selectEditore(cod, nome, email) {
-  document.getElementById('dir-editore-search').value = `${nome} (${cod})`;
-  document.getElementById('dir-editore-val').value = JSON.stringify({ cod_cliente: cod, ragione_sociale: nome, email });
+function selectEditore(codice, nome) {
+  document.getElementById('dir-editore-search').value = `${nome} (${codice})`;
+  document.getElementById('dir-editore-val').value = JSON.stringify({ codice, nome });
   document.getElementById('editori-drop').style.display = 'none';
   document.getElementById('dir-editore-search').classList.remove('err');
 }
@@ -1407,9 +1521,9 @@ async function salvaDiretto() {
   const payload = {
     agente: currentUser.email,
     ean, titolo,
-    editore_cod: editore.cod_cliente,
-    editore_nome: editore.ragione_sociale,
-    editore_email: editore.email || '',
+    editore_cod: editore.codice,
+    editore_nome: editore.nome,
+    editore_email: '',
     quantita: qta,
     sconto: document.getElementById('dir-sconto').value || null,
     pagamento: document.getElementById('dir-pag').value || null,
@@ -1484,7 +1598,7 @@ Inserita da: ${r.agente}
           ${sconto}${pag}${oda}
         </div>
         <div style="font-size:.75rem;color:var(--warn)">${r.motivo}</div>
-        ${r.editore_email ? `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 A: ${r.editore_email} — CC: ${CC_FISSI}, ${r.agente}</div>` : `<div class="alert alert-warn" style="margin-top:.5rem;padding:.35rem .7rem;font-size:.75rem">⚠ Nessuna email editore configurata — inserirla in tabella <code>diretti_editore_config</code></div>`}
+        ${r.editore_email ? `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 A: ${r.editore_email} — CC: ${CC_FISSI}, ${r.agente}</div>` : `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 CC: ${CC_FISSI}, ${r.agente}</div>`}
       </div>
     </div>`;
   }).join('');
