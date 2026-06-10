@@ -279,17 +279,19 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 <div id="app" style="display:none">
   <div class="container">
     <div class="tabs" id="main-tabs">
-      <button class="tab-btn active" onclick="showTab('nuova')">+ Nuova richiesta</button>
+      <button class="tab-btn active" onclick="showTab('nuova')">+ Nuova Richiesta Tassative</button>
       <button class="tab-btn" onclick="showTab('storico')">Storico inviati</button>
       <button class="tab-btn" onclick="showTab('livelli')">Livelli di servizio</button>
       <button class="tab-btn" id="tab-sosp-btn" style="display:none" onclick="showTab('sospesi')">⏸ Sospesi</button>
-      <button class="tab-btn" id="tab-exp-btn" style="display:none" onclick="showTab('esporta')">⬇ Esporta Excel</button>
+      <button class="tab-btn" id="tab-exp-btn" style="display:none" onclick="showTab('esporta')">⬇ Esporta Excel Tassative</button>
+      <button class="tab-btn" id="tab-dir-new-btn" style="display:none" onclick="showTab('diretti-new')">📦 Nuova Richiesta Diretti Editore</button>
+      <button class="tab-btn" id="tab-dir-send-btn" style="display:none" onclick="showTab('diretti-send')">✉ Invia Richiesta Diretti Editore</button>
     </div>
 
     <!-- NUOVA / EDIT -->
     <div id="tab-nuova">
       <div class="sec-head">
-        <h1 id="form-title">Nuova richiesta</h1>
+        <h1 id="form-title">Nuova Richiesta Tassative</h1>
         <p>Compila i destinatari. Le richieste del turno corrente appaiono qui sotto in tempo reale.</p>
       </div>
       <div id="edit-banner" style="display:none" class="edit-banner">
@@ -407,7 +409,7 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 
     <!-- ESPORTA (solo admin) -->
     <div id="tab-esporta" style="display:none">
-      <div class="storico-head"><h2>Esporta Excel</h2></div>
+      <div class="storico-head"><h2>Esporta Excel Tassative</h2></div>
       <div class="exp-card">
         <div class="exp-head-bar">Seleziona invio da esportare</div>
         <div class="exp-body">
@@ -427,6 +429,87 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
             <span style="font-size:.76rem;color:var(--testo-sub)" id="exp-count"></span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- DIRETTI EDITORE — NUOVA RICHIESTA (solo admin) -->
+    <div id="tab-diretti-new" style="display:none">
+      <div class="sec-head">
+        <h1>Nuova Richiesta Diretti Editore</h1>
+        <p>Compila i dati per la richiesta di invio diretto all'editore.</p>
+      </div>
+      <div id="dir-new-alert"></div>
+      <div class="form-card">
+        <div class="fcard-head"><span>Dati richiesta</span></div>
+        <div class="fcard-body">
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="field">
+              <label>EAN A13 <span class="req">*</span></label>
+              <input type="text" id="dir-ean" maxlength="13" placeholder="9788812345678" oninput="this.classList.remove('err')">
+            </div>
+            <div class="field">
+              <label>Titolo <span class="req">*</span></label>
+              <input type="text" id="dir-titolo" placeholder="Titolo del libro" oninput="this.classList.remove('err')">
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:.65rem">
+            <label>Editore <span class="req">*</span></label>
+            <div style="position:relative">
+              <input type="text" id="dir-editore-search" placeholder="Cerca editore…" autocomplete="off"
+                oninput="filterEditori()" onfocus="showEditoriDrop()" onblur="setTimeout(hideEditoriDrop,180)"
+                style="width:100%" oninputcapture="this.classList.remove('err')">
+              <input type="hidden" id="dir-editore-val">
+              <div id="editori-drop" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:var(--bg-card);border:1px solid var(--bordo-az);border-top:none;border-radius:0 0 8px 8px;max-height:220px;overflow-y:auto;"></div>
+            </div>
+          </div>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="field">
+              <label>Quantità <span class="req">*</span></label>
+              <input type="number" id="dir-qta" min="1" placeholder="es. 10" oninput="this.classList.remove('err')">
+            </div>
+            <div class="field">
+              <label>Sc. Occas. (%)</label>
+              <input type="number" id="dir-sconto" min="0" max="99" placeholder="%">
+            </div>
+            <div class="field">
+              <label>Pag. Occas. (gg)</label>
+              <input type="number" id="dir-pag" min="0" max="999" placeholder="gg">
+            </div>
+          </div>
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="field">
+              <label>ODA / N. Ordine</label>
+              <input type="text" id="dir-oda" placeholder="Numero ordine o ODA">
+            </div>
+            <div class="field">
+              <label>Data richiesta</label>
+              <input type="date" id="dir-data" onclick="this.showPicker&&this.showPicker()">
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:.65rem">
+            <label>Motivo richiesta <span class="req">*</span></label>
+            <input type="text" id="dir-motivo" placeholder="es. Riassortimento urgente per evento" oninput="this.classList.remove('err')">
+          </div>
+        </div>
+        <div class="fcard-foot">
+          <span class="fcard-foot-info" id="dir-inserito-da"></span>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn btn-ghost" onclick="resetDirForm()">Azzera</button>
+            <button class="btn btn-accent" onclick="salvaDiretto()">💾 Salva richiesta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIRETTI EDITORE — INVIA (solo admin) -->
+    <div id="tab-diretti-send" style="display:none">
+      <div class="storico-head">
+        <h2>Invia Richiesta Diretti Editore</h2>
+        <button class="btn btn-ghost" onclick="loadDirettiNonInviati()">↻ Carica non inviati</button>
+      </div>
+      <div id="dir-send-alert"></div>
+      <div id="dir-send-list">
+        <div class="empty-state"><div class="icon">📬</div><p>Clicca "Carica non inviati" per visualizzare le richieste.</p></div>
       </div>
     </div>
 
@@ -492,6 +575,8 @@ function onLogin(user) {
     document.getElementById('admin-badge').style.display='inline-flex';
     document.getElementById('tab-exp-btn').style.display='flex';
     document.getElementById('tab-sosp-btn').style.display='flex';
+    document.getElementById('tab-dir-new-btn').style.display='flex';
+    document.getElementById('tab-dir-send-btn').style.display='flex';
     document.getElementById('filter-agente').style.display='block';
   }
   if(isAdmin) setTimeout(checkSospesiPopup, 800);
@@ -599,7 +684,7 @@ async function startEdit(id) {
 
 function cancelEdit() {
   editingId=null;
-  document.getElementById('form-title').textContent='Nuova richiesta';
+  document.getElementById('form-title').textContent='Nuova Richiesta Tassative';
   document.getElementById('edit-banner').style.display='none';
   document.getElementById('submit-btn').className='btn btn-accent';
   document.getElementById('submit-btn').textContent='Inserisci richiesta';
@@ -804,7 +889,7 @@ async function loadStorico(){
       return `<div class="dst-row"><div class="dst-rhead"><span class="dst-cod">Cod. ${d.cod_cliente}</span><div style="display:flex;gap:.35rem;align-items:center">${d.data_consegna?`<span style="font-size:.7rem;color:var(--testo-sub)">consegna ${d.data_consegna}</span>`:''}${altB}</div></div>${altI}<table class="art-tbl"><thead><tr><th>EAN</th><th>Titolo</th><th>Copie</th><th>Sconto</th><th>Pag.</th></tr></thead><tbody>${arts}</tbody></table></div>`;
     }).join('');
     const totArt=(r.destinatari||[]).reduce((s,d)=>s+(d.articoli||[]).length,0);
-    return `<div class="ric-card"><div class="ric-head"><div class="ric-meta"><span class="tag ${tc}">${r.turno}</span><span class="tag tag-ag">${r.agente}</span><span class="tag-dt">${dStr} ${oStr}</span>${expTag}</div><span style="font-size:.7rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span></div><div class="ric-body">${destsHTML}</div></div>`;
+    return `<div class="ric-card"><div class="ric-head"><div class="ric-meta"><span class="tag ${tc}">${r.turno}</span><span class="tag tag-ag">👤 ${r.agente}</span><span class="tag-dt">${dStr} ${oStr}</span>${expTag}</div><span style="font-size:.7rem;color:var(--testo-sub)">${(r.destinatari||[]).length} dest · ${totArt} art.</span></div><div class="ric-body"><div style="font-size:.72rem;color:var(--testo-sub);margin-bottom:.5rem;padding-bottom:.5rem;border-bottom:1px solid var(--bordo)">Richiesta inserita da: <strong style="color:var(--testo-dim)">${r.agente}</strong></div>${destsHTML}</div></div>`;
   }).join('');
 }
 
@@ -936,16 +1021,17 @@ async function esportaExcel(){
 
 // ── TABS ──────────────────────────────────────────────────────
 function showTab(name){
-  ['nuova','storico','livelli','sospesi','esporta'].forEach(t=>{
+  ['nuova','storico','livelli','sospesi','esporta','diretti-new','diretti-send'].forEach(t=>{
     document.getElementById(`tab-${t}`).style.display=t===name?'block':'none';
   });
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   const allBtns=document.querySelectorAll('.tab-btn');
-  const idx={nuova:0,storico:1,livelli:2,sospesi:3,esporta:4};
+  const idx={nuova:0,storico:1,livelli:2,sospesi:3,esporta:4,'diretti-new':5,'diretti-send':6};
   if(allBtns[idx[name]]) allBtns[idx[name]].classList.add('active');
   if(name==='storico'){if(!document.getElementById('filter-data').value)document.getElementById('filter-data').value=new Date().toISOString().slice(0,10);loadStorico();}
   if(name==='livelli'&&!livelliAll.length) loadLivelli();
   if(name==='esporta'){if(!document.getElementById('exp-data').value)document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);document.getElementById('exp-turno').value=getTurno();}
+  if(name==='diretti-new'){const d=document.getElementById('dir-inserito-da');if(d)d.textContent='Inserisce: '+currentUser.email;}
 }
 
 // ── SOSPESI ───────────────────────────────────────────────────
@@ -1249,6 +1335,170 @@ async function cancellaRichiesta(id) {
   document.getElementById('global-alert').innerHTML = '<div class="alert alert-success">✓ Richiesta cancellata.</div>';
   loadBozze();
   setTimeout(() => { document.getElementById('global-alert').innerHTML = ''; }, 3000);
+}
+
+// ── DIRETTI EDITORE ──────────────────────────────────────────
+// Lista editori (caricata da Supabase al primo accesso alla tab)
+let editoriList = [];
+
+async function loadEditori() {
+  if (editoriList.length) return;
+  const { data, error } = await sb.from('diretti_editore_config').select('cod_cliente,ragione_sociale,email').order('ragione_sociale');
+  if (!error && data?.length) editoriList = data;
+}
+
+function showEditoriDrop() {
+  loadEditori().then(() => filterEditori());
+}
+
+function filterEditori() {
+  const q = document.getElementById('dir-editore-search').value.toLowerCase();
+  const drop = document.getElementById('editori-drop');
+  const filtered = editoriList.filter(e =>
+    e.ragione_sociale.toLowerCase().includes(q) || (e.cod_cliente||'').toLowerCase().includes(q)
+  ).slice(0, 40);
+  if (!filtered.length) { drop.style.display = 'none'; return; }
+  drop.innerHTML = filtered.map(e =>
+    `<div style="padding:.45rem .8rem;cursor:pointer;font-size:.84rem;color:var(--testo);border-bottom:1px solid var(--bordo)"
+      onmousedown="selectEditore('${e.cod_cliente}','${e.ragione_sociale.replace(/'/g,"\\'")}','${(e.email||'').replace(/'/g,"\\'")}')">
+      <span style="color:var(--azzurro);font-family:'DM Mono',monospace;font-size:.75rem">${e.cod_cliente}</span>
+      <span style="margin-left:.5rem">${e.ragione_sociale}</span>
+    </div>`
+  ).join('');
+  drop.style.display = 'block';
+}
+
+function selectEditore(cod, nome, email) {
+  document.getElementById('dir-editore-search').value = `${nome} (${cod})`;
+  document.getElementById('dir-editore-val').value = JSON.stringify({ cod_cliente: cod, ragione_sociale: nome, email });
+  document.getElementById('editori-drop').style.display = 'none';
+  document.getElementById('dir-editore-search').classList.remove('err');
+}
+
+function hideEditoriDrop() {
+  document.getElementById('editori-drop').style.display = 'none';
+}
+
+function resetDirForm() {
+  ['dir-ean','dir-titolo','dir-editore-search','dir-editore-val','dir-oda','dir-motivo','dir-qta','dir-sconto','dir-pag'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('dir-data').value = '';
+  document.getElementById('dir-new-alert').innerHTML = '';
+}
+
+async function salvaDiretto() {
+  const alertEl = document.getElementById('dir-new-alert');
+  alertEl.innerHTML = '';
+  const ean = document.getElementById('dir-ean').value.trim();
+  const titolo = document.getElementById('dir-titolo').value.trim();
+  const editoreRaw = document.getElementById('dir-editore-val').value;
+  const qta = parseInt(document.getElementById('dir-qta').value) || 0;
+  const motivo = document.getElementById('dir-motivo').value.trim();
+  let valid = true;
+  if (!ean) { document.getElementById('dir-ean').classList.add('err'); valid = false; }
+  if (!titolo) { document.getElementById('dir-titolo').classList.add('err'); valid = false; }
+  if (!editoreRaw) { document.getElementById('dir-editore-search').classList.add('err'); valid = false; }
+  if (!qta) { document.getElementById('dir-qta').classList.add('err'); valid = false; }
+  if (!motivo) { document.getElementById('dir-motivo').classList.add('err'); valid = false; }
+  if (!valid) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Verifica i campi obbligatori.</div>'; return; }
+  let editore = {};
+  try { editore = JSON.parse(editoreRaw); } catch(e) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Seleziona un editore dalla lista.</div>'; return; }
+  const payload = {
+    agente: currentUser.email,
+    ean, titolo,
+    editore_cod: editore.cod_cliente,
+    editore_nome: editore.ragione_sociale,
+    editore_email: editore.email || '',
+    quantita: qta,
+    sconto: document.getElementById('dir-sconto').value || null,
+    pagamento: document.getElementById('dir-pag').value || null,
+    oda: document.getElementById('dir-oda').value.trim() || null,
+    data_richiesta: document.getElementById('dir-data').value || new Date().toISOString().slice(0,10),
+    motivo,
+    inviato: false
+  };
+  const { error } = await sb.from('diretti_editore').insert(payload);
+  if (error) { alertEl.innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`; return; }
+  alertEl.innerHTML = '<div class="alert alert-success">✓ Richiesta salvata con successo!</div>';
+  resetDirForm();
+  setTimeout(() => { alertEl.innerHTML = ''; }, 4000);
+}
+
+// ── DIRETTI EDITORE — INVIA ───────────────────────────────────
+async function loadDirettiNonInviati() {
+  const list = document.getElementById('dir-send-list');
+  const alertEl = document.getElementById('dir-send-alert');
+  alertEl.innerHTML = '';
+  list.innerHTML = '<div class="alert alert-info">Caricamento…</div>';
+  const { data, error } = await sb.from('diretti_editore').select('*').eq('inviato', false).order('data_richiesta', { ascending: false });
+  if (error) { list.innerHTML = `<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
+  if (!data?.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Nessuna richiesta da inviare.</p></div>'; return; }
+
+  const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it';
+
+  list.innerHTML = data.map(r => {
+    const dt = new Date(r.data_richiesta).toLocaleDateString('it-IT');
+    const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
+    const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
+    const oda = r.oda ? `<span style="color:var(--testo-sub)">ODA: ${r.oda}</span>` : '';
+    // Corpo mail
+    const corpo = encodeURIComponent(
+`Buongiorno,
+
+Di seguito i dati per la richiesta di un invio diretto con tutte le informazioni. Attendiamo conferma per la spedizione con relativo ddt appena in vostro possesso, per fatturazione. Grazie
+
+──────────────────────────────
+EAN: ${r.ean}
+Titolo: ${r.titolo}
+Editore: ${r.editore_nome} (${r.editore_cod})
+Quantità: ${r.quantita}${r.sconto ? '\nSconto occas.: ' + r.sconto + '%' : ''}${r.pagamento ? '\nPagamento occas.: ' + r.pagamento + ' gg' : ''}${r.oda ? '\nODA / N. Ordine: ' + r.oda : ''}
+Data richiesta: ${dt}
+Motivo: ${r.motivo}
+──────────────────────────────
+
+Inserita da: ${r.agente}
+`);
+    const oggetto = encodeURIComponent(`Richiesta Diretto — ${r.editore_nome} (${r.editore_cod})`);
+    const ccAll = encodeURIComponent(`${CC_FISSI},${r.agente}`);
+    const toEmail = r.editore_email || '';
+    const mailtoHref = `mailto:${toEmail}?subject=${oggetto}&cc=${ccAll}&body=${corpo}`;
+
+    return `<div class="ric-card" id="dir-row-${r.id}">
+      <div class="ric-head">
+        <div class="ric-meta">
+          <span class="tag tag-ag">👤 ${r.agente}</span>
+          <span class="tag-dt">${dt}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--azzurro)">${r.ean}</span>
+        </div>
+        <div style="display:flex;gap:.4rem;align-items:center">
+          <a href="${mailtoHref}" class="btn btn-accent" style="text-decoration:none;font-size:.78rem;padding:.35rem .85rem"
+            onclick="setTimeout(()=>segnaInviato('${r.id}'),3000)">✉ Invia mail</a>
+        </div>
+      </div>
+      <div class="ric-body">
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem .8rem;font-size:.78rem;margin-bottom:.4rem">
+          <strong style="color:#fff">${r.titolo}</strong>
+          <span style="color:var(--testo-dim)">Editore: <strong>${r.editore_nome}</strong></span>
+          <span style="color:var(--testo-dim)">Qta: <strong>${r.quantita}</strong></span>
+          ${sconto}${pag}${oda}
+        </div>
+        <div style="font-size:.75rem;color:var(--warn)">${r.motivo}</div>
+        ${r.editore_email ? `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 A: ${r.editore_email} — CC: ${CC_FISSI}, ${r.agente}</div>` : `<div class="alert alert-warn" style="margin-top:.5rem;padding:.35rem .7rem;font-size:.75rem">⚠ Nessuna email editore configurata — inserirla in tabella <code>diretti_editore_config</code></div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function segnaInviato(id) {
+  await sb.from('diretti_editore').update({ inviato: true, data_invio: new Date().toISOString(), inviato_da: currentUser.email }).eq('id', id);
+  const row = document.getElementById(`dir-row-${id}`);
+  if (row) {
+    row.style.opacity = '.45';
+    row.querySelector('.btn-accent').textContent = '✓ Inviata';
+    row.querySelector('.btn-accent').style.background = 'var(--success)';
+    row.querySelector('.btn-accent').removeAttribute('href');
+  }
 }
 
 // ── LOGOUT ────────────────────────────────────────────────────
