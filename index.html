@@ -507,7 +507,6 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
             <label>Motivo richiesta <span class="req">*</span></label>
             <input type="text" id="dir-motivo" placeholder="es. Riassortimento urgente per evento" oninput="this.classList.remove('err')">
           </div>
-
           <!-- Dati libreria destinataria -->
           <div style="font-size:.68rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.55rem;margin-top:.3rem;padding-top:.8rem;border-top:1px solid var(--bordo)">📦 Dati libreria destinataria</div>
           <div class="g2" style="margin-bottom:.65rem">
@@ -547,17 +546,35 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
           </div>
         </div>
       </div>
+
+      <!-- Lista richieste non inviate sotto il form -->
+      <div class="bozze-section" id="dir-new-pending-section" style="display:none;margin-top:1.5rem">
+        <div class="bozze-title">
+          Richieste in attesa di invio
+          <span class="cnt-boz" id="dir-new-pending-count">0</span>
+        </div>
+        <div id="dir-new-pending-list"></div>
+      </div>
     </div>
 
     <!-- DIRETTI EDITORE — INVIA (solo admin) -->
     <div id="tab-diretti-send" style="display:none">
       <div class="storico-head">
         <h2>Invia Richiesta Diretti Editore</h2>
-        <button class="btn btn-ghost" onclick="loadDirettiNonInviati()">↻ Carica non inviati</button>
+        <button class="btn btn-ghost" onclick="loadDirettiAll()">↻ Aggiorna</button>
+      </div>
+      <div class="filter-row" style="margin-bottom:1rem">
+        <input type="text" id="dir-filter-ean" placeholder="Cerca EAN…" oninput="filterDiretti()" style="width:160px">
+        <input type="text" id="dir-filter-cod" placeholder="Cerca Cod. MELI…" oninput="filterDiretti()" style="width:160px">
+        <select id="dir-filter-stato" onchange="filterDiretti()">
+          <option value="">Tutti</option>
+          <option value="false">Non inviati</option>
+          <option value="true">Inviati</option>
+        </select>
       </div>
       <div id="dir-send-alert"></div>
       <div id="dir-send-list">
-        <div class="empty-state"><div class="icon">📬</div><p>Clicca "Carica non inviati" per visualizzare le richieste.</p></div>
+        <div class="empty-state"><div class="icon">📬</div><p>Caricamento…</p></div>
       </div>
     </div>
 
@@ -1080,8 +1097,8 @@ function showTab(name){
   if(name==='storico'){if(!document.getElementById('filter-data').value)document.getElementById('filter-data').value=new Date().toISOString().slice(0,10);loadStorico();}
   if(name==='livelli'&&!livelliAll.length) loadLivelli();
   if(name==='esporta'){if(!document.getElementById('exp-data').value)document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);document.getElementById('exp-turno').value=getTurno();}
-  if(name==='diretti-new'){const d=document.getElementById('dir-inserito-da');if(d)d.textContent='Inserisce: '+currentUser.email;}
-  if(name==='diretti-send') { loadDirettiNonInviati(); resetDirettiBadge(); }
+  if(name==='diretti-new'){const d=document.getElementById('dir-inserito-da');if(d)d.textContent='Inserisce: '+currentUser.email; loadDirettiPending();}
+  if(name==='diretti-send') { loadDirettiAll(); resetDirettiBadge(); }
 }
 
 // ── SOSPESI ───────────────────────────────────────────────────
@@ -1602,29 +1619,20 @@ async function salvaDiretto() {
   if (error) { alertEl.innerHTML = `<div class="alert alert-error">⚠ Errore: ${error.message}</div>`; return; }
   alertEl.innerHTML = '<div class="alert alert-success">✓ Richiesta salvata con successo!</div>';
   resetDirForm();
+  loadDirettiPending();
   setTimeout(() => { alertEl.innerHTML = ''; }, 4000);
 }
 
-// ── DIRETTI EDITORE — INVIA ───────────────────────────────────
-async function loadDirettiNonInviati() {
-  const list = document.getElementById('dir-send-list');
-  const alertEl = document.getElementById('dir-send-alert');
-  alertEl.innerHTML = '';
-  list.innerHTML = '<div class="alert alert-info">Caricamento…</div>';
-  const { data, error } = await sb.from('diretti_editore').select('*').eq('inviato', false).order('data_richiesta', { ascending: false });
-  if (error) { list.innerHTML = `<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
-  if (!data?.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Nessuna richiesta da inviare.</p></div>'; return; }
+// ── DIRETTI EDITORE — DATI CONDIVISI ─────────────────────────
+let direttiAllRows = []; // cache locale
 
+function direttiCardHTML(r, showMailBtn) {
   const CC_FISSI = 'federico.marchi@pde.it,chiara.piazzolla@stage.pde.it,alberto.simola@pde.it';
-
-  list.innerHTML = data.map(r => {
-    const dt = new Date(r.data_richiesta).toLocaleDateString('it-IT');
-    const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
-    const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
-    const oda = r.oda ? `<span style="color:var(--testo-sub)">ODA: ${r.oda}</span>` : '';
-    const libInfo = [r.nome_libreria, r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ');
-    // Corpo mail
-    const corpo = encodeURIComponent(
+  const dt = new Date(r.data_richiesta).toLocaleDateString('it-IT');
+  const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
+  const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
+  const oda = r.oda ? `<span style="color:var(--testo-sub)">ODA: ${r.oda}</span>` : '';
+  const corpo = encodeURIComponent(
 `Buongiorno,
 
 Di seguito i dati per la richiesta di un invio diretto con tutte le informazioni. Attendiamo conferma per la spedizione con relativo ddt appena in vostro possesso, per fatturazione. Grazie
@@ -1647,48 +1655,99 @@ CAP / Città: ${r.cap || ''} ${r.citta || ''} (${r.provincia || ''})
 
 Inserita da: ${r.agente}
 `);
-    const oggetto = encodeURIComponent(`Richiesta Diretto — ${r.editore_nome} (${r.editore_cod})`);
-    const ccAll = encodeURIComponent(`${CC_FISSI},${r.agente}`);
-    const toEmail = r.editore_email || '';
-    const mailtoHref = `mailto:${toEmail}?subject=${oggetto}&cc=${ccAll}&body=${corpo}`;
+  const oggetto = encodeURIComponent(`Richiesta Diretto — ${r.editore_nome} (${r.editore_cod})`);
+  const ccAll = encodeURIComponent(`${CC_FISSI},${r.agente}`);
+  const toEmail = r.editore_email || '';
+  const mailtoHref = `mailto:${toEmail}?subject=${oggetto}&cc=${ccAll}&body=${corpo}`;
+  const inviatoTag = r.inviato ? `<span class="tag tag-exp">✓ Inviata</span>` : '';
+  const actionBtn = showMailBtn && !r.inviato
+    ? `<a href="${mailtoHref}" class="btn btn-accent" style="text-decoration:none;font-size:.78rem;padding:.35rem .85rem"
+        onclick="setTimeout(()=>segnaInviato('${r.id}'),3000)">✉ Invia mail</a>`
+    : r.inviato ? `<span class="btn btn-ghost" style="cursor:default;opacity:.5;font-size:.78rem">✓ Inviata</span>` : '';
 
-    return `<div class="ric-card" id="dir-row-${r.id}">
-      <div class="ric-head">
-        <div class="ric-meta">
-          <span class="tag tag-ag">👤 ${r.agente}</span>
-          <span class="tag-dt">${dt}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--azzurro)">${r.ean}</span>
-        </div>
-        <div style="display:flex;gap:.4rem;align-items:center">
-          <a href="${mailtoHref}" class="btn btn-accent" style="text-decoration:none;font-size:.78rem;padding:.35rem .85rem"
-            onclick="setTimeout(()=>segnaInviato('${r.id}'),3000)">✉ Invia mail</a>
-        </div>
+  return `<div class="ric-card" id="dir-row-${r.id}" style="${r.inviato ? 'opacity:.6' : ''}">
+    <div class="ric-head">
+      <div class="ric-meta">
+        ${inviatoTag}
+        <span class="tag tag-ag">👤 ${r.agente}</span>
+        <span class="tag-dt">${dt}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:var(--azzurro)">${r.ean}</span>
       </div>
-      <div class="ric-body">
-        <div style="display:flex;flex-wrap:wrap;gap:.5rem .8rem;font-size:.78rem;margin-bottom:.4rem">
-          <strong style="color:#fff">${r.titolo}</strong>
-          <span style="color:var(--testo-dim)">Editore: <strong>${r.editore_nome}</strong></span>
-          <span style="color:var(--testo-dim)">Qta: <strong>${r.quantita}</strong></span>
-          ${sconto}${pag}${oda}
-        </div>
-        <div style="font-size:.75rem;color:var(--warn);margin-bottom:.35rem">${r.motivo}</div>
-        ${libInfo ? `<div style="font-size:.74rem;color:var(--testo-dim)">📦 <strong style="color:var(--testo)">${r.nome_libreria||''}</strong>${r.cod_meli ? ` <span style="font-family:'DM Mono',monospace;color:var(--azzurro);font-size:.7rem">${r.cod_meli}</span>` : ''} — ${[r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ')}</div>` : ''}
-        ${r.editore_email ? `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 A: ${r.editore_email} — CC: ${CC_FISSI}, ${r.agente}</div>` : `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 CC: ${CC_FISSI}, ${r.agente}</div>`}
+      <div style="display:flex;gap:.4rem;align-items:center">${actionBtn}</div>
+    </div>
+    <div class="ric-body">
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem .8rem;font-size:.78rem;margin-bottom:.4rem">
+        <strong style="color:#fff">${r.titolo}</strong>
+        <span style="color:var(--testo-dim)">Editore: <strong>${r.editore_nome}</strong></span>
+        <span style="color:var(--testo-dim)">Qta: <strong>${r.quantita}</strong></span>
+        ${sconto}${pag}${oda}
       </div>
-    </div>`;
-  }).join('');
+      <div style="font-size:.75rem;color:var(--warn);margin-bottom:.35rem">${r.motivo}</div>
+      <div style="font-size:.74rem;color:var(--testo-dim)">📦 <strong style="color:var(--testo)">${r.nome_libreria||'—'}</strong>${r.cod_meli ? ` <span style="font-family:'DM Mono',monospace;color:var(--azzurro);font-size:.7rem">${r.cod_meli}</span>` : ''} — ${[r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ')}</div>
+      <div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 ${toEmail ? 'A: ' + toEmail + ' — ' : ''}CC: ${CC_FISSI}, ${r.agente}</div>
+    </div>
+  </div>`;
+}
+
+// Carica TUTTE le richieste (tab Invia)
+async function loadDirettiAll() {
+  const list = document.getElementById('dir-send-list');
+  const alertEl = document.getElementById('dir-send-alert');
+  alertEl.innerHTML = '';
+  list.innerHTML = '<div class="alert alert-info">Caricamento…</div>';
+  const { data, error } = await sb.from('diretti_editore').select('*').order('created_at', { ascending: false });
+  if (error) { list.innerHTML = `<div class="alert alert-error">Errore: ${error.message}</div>`; return; }
+  direttiAllRows = data || [];
+  filterDiretti();
+}
+
+// Filtro client-side (tab Invia)
+function filterDiretti() {
+  const ean = (document.getElementById('dir-filter-ean')?.value || '').toLowerCase().trim();
+  const cod = (document.getElementById('dir-filter-cod')?.value || '').toLowerCase().trim();
+  const stato = document.getElementById('dir-filter-stato')?.value;
+  const list = document.getElementById('dir-send-list');
+  let rows = direttiAllRows;
+  if (ean)   rows = rows.filter(r => (r.ean||'').toLowerCase().includes(ean));
+  if (cod)   rows = rows.filter(r => (r.cod_meli||'').toLowerCase().includes(cod));
+  if (stato === 'true')  rows = rows.filter(r => r.inviato);
+  if (stato === 'false') rows = rows.filter(r => !r.inviato);
+  if (!rows.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Nessuna richiesta trovata.</p></div>'; return; }
+  list.innerHTML = rows.map(r => direttiCardHTML(r, true)).join('');
+}
+
+// Carica richieste non inviate sotto il form (tab Nuova)
+async function loadDirettiPending() {
+  const { data, error } = await sb.from('diretti_editore').select('*').eq('inviato', false).order('created_at', { ascending: false });
+  const section = document.getElementById('dir-new-pending-section');
+  const listEl = document.getElementById('dir-new-pending-list');
+  const countEl = document.getElementById('dir-new-pending-count');
+  if (error || !data?.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  countEl.textContent = data.length;
+  listEl.innerHTML = data.map(r => direttiCardHTML(r, false)).join('');
 }
 
 async function segnaInviato(id) {
   await sb.from('diretti_editore').update({ inviato: true, data_invio: new Date().toISOString(), inviato_da: currentUser.email }).eq('id', id);
+  // Aggiorna cache
+  const idx = direttiAllRows.findIndex(r => r.id === id);
+  if (idx >= 0) direttiAllRows[idx].inviato = true;
+  // Aggiorna UI tab Invia
   const row = document.getElementById(`dir-row-${id}`);
   if (row) {
-    row.style.opacity = '.45';
-    row.querySelector('.btn-accent').textContent = '✓ Inviata';
-    row.querySelector('.btn-accent').style.background = 'var(--success)';
-    row.querySelector('.btn-accent').removeAttribute('href');
+    row.style.opacity = '.6';
+    const btn = row.querySelector('.btn-accent');
+    if (btn) { btn.textContent = '✓ Inviata'; btn.style.background = 'var(--success)'; btn.removeAttribute('href'); btn.onclick = null; }
+    const meta = row.querySelector('.ric-meta');
+    if (meta) meta.insertAdjacentHTML('afterbegin', '<span class="tag tag-exp">✓ Inviata</span>');
   }
+  // Aggiorna pending sotto il form
+  loadDirettiPending();
 }
+
+// Compatibilità: alias usato dal realtime
+function loadDirettiNonInviati() { loadDirettiAll(); }
 
 // ── TOAST ─────────────────────────────────────────────────────
 function showToast(title, msg, type='info', duration=6000) {
