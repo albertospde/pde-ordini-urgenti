@@ -226,10 +226,27 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
 .spinner{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
+/* TOAST NOTIFICHE */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;pointer-events:none;}
+.toast{background:var(--bg-card);border:1px solid var(--bordo-az);border-left:3px solid var(--azzurro);border-radius:10px;padding:.75rem 1rem;min-width:280px;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:all;display:flex;align-items:flex-start;gap:.6rem;animation:toastIn .25s ease;}
+.toast.toast-warn{border-left-color:var(--warn);border-color:rgba(245,166,35,.3);}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+.toast-icon{font-size:1.1rem;flex-shrink:0;}
+.toast-body{flex:1;}
+.toast-title{font-size:.82rem;font-weight:700;color:#fff;margin-bottom:.15rem;}
+.toast-msg{font-size:.76rem;color:var(--testo-dim);}
+.toast-close{background:none;border:none;cursor:pointer;color:var(--testo-sub);font-size:.9rem;padding:0;line-height:1;flex-shrink:0;}
+.toast-close:hover{color:#fff;}
+/* Badge contatore tab */
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--warn);color:#000;font-size:.58rem;font-weight:800;border-radius:20px;min-width:16px;height:16px;padding:0 .3rem;margin-left:.35rem;line-height:1;}
+
 @media(max-width:600px){.g2,.g3{grid-template-columns:1fr;}.art-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
 
 <!-- MODALE SOSPESI -->
 <div id="modal-sospesi" class="modal-overlay" style="display:none">
@@ -490,6 +507,37 @@ header{background:rgba(13,22,48,.92);backdrop-filter:blur(12px);border-bottom:1p
             <label>Motivo richiesta <span class="req">*</span></label>
             <input type="text" id="dir-motivo" placeholder="es. Riassortimento urgente per evento" oninput="this.classList.remove('err')">
           </div>
+
+          <!-- Dati libreria destinataria -->
+          <div style="font-size:.68rem;font-weight:700;color:var(--testo-sub);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.55rem;margin-top:.3rem;padding-top:.8rem;border-top:1px solid var(--bordo)">📦 Dati libreria destinataria</div>
+          <div class="g2" style="margin-bottom:.65rem">
+            <div class="field">
+              <label>Cod. Cliente MELI <span class="req">*</span></label>
+              <input type="text" id="dir-cod-meli" placeholder="es. 2643901" oninput="this.classList.remove('err')">
+            </div>
+            <div class="field">
+              <label>Nome libreria <span class="req">*</span></label>
+              <input type="text" id="dir-nome-lib" placeholder="es. Libreria Feltrinelli" oninput="this.classList.remove('err')">
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:.65rem">
+            <label>Indirizzo <span class="req">*</span></label>
+            <input type="text" id="dir-indirizzo" placeholder="Via/Piazza, n." oninput="this.classList.remove('err')">
+          </div>
+          <div class="g3" style="margin-bottom:.65rem">
+            <div class="field">
+              <label>CAP <span class="req">*</span></label>
+              <input type="text" id="dir-cap" maxlength="5" placeholder="00000" oninput="this.classList.remove('err')">
+            </div>
+            <div class="field">
+              <label>Città <span class="req">*</span></label>
+              <input type="text" id="dir-citta" placeholder="es. Milano" oninput="this.classList.remove('err')">
+            </div>
+            <div class="field">
+              <label>Provincia <span class="req">*</span></label>
+              <input type="text" id="dir-prov" maxlength="2" placeholder="MI" style="text-transform:uppercase" oninput="this.classList.remove('err')">
+            </div>
+          </div>
         </div>
         <div class="fcard-foot">
           <span class="fcard-foot-info" id="dir-inserito-da"></span>
@@ -580,6 +628,7 @@ function onLogin(user) {
     document.getElementById('filter-agente').style.display='block';
   }
   if(isAdmin) setTimeout(checkSospesiPopup, 800);
+  if(isAdmin) setupDirettiRealtime();
   updateTurnoBanner();
   addDest();
   if(isAdmin) { sospDestCounter=0; sospArtCounters={}; addSospDest(); }
@@ -1032,6 +1081,7 @@ function showTab(name){
   if(name==='livelli'&&!livelliAll.length) loadLivelli();
   if(name==='esporta'){if(!document.getElementById('exp-data').value)document.getElementById('exp-data').value=new Date().toISOString().slice(0,10);document.getElementById('exp-turno').value=getTurno();}
   if(name==='diretti-new'){const d=document.getElementById('dir-inserito-da');if(d)d.textContent='Inserisce: '+currentUser.email;}
+  if(name==='diretti-send') { loadDirettiNonInviati(); resetDirettiBadge(); }
 }
 
 // ── SOSPESI ───────────────────────────────────────────────────
@@ -1494,7 +1544,8 @@ function hideEditoriDrop() {
 }
 
 function resetDirForm() {
-  ['dir-ean','dir-titolo','dir-editore-search','dir-editore-val','dir-oda','dir-motivo','dir-qta','dir-sconto','dir-pag'].forEach(id => {
+  ['dir-ean','dir-titolo','dir-editore-search','dir-editore-val','dir-oda','dir-motivo','dir-qta','dir-sconto','dir-pag',
+   'dir-cod-meli','dir-nome-lib','dir-indirizzo','dir-cap','dir-citta','dir-prov'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   document.getElementById('dir-data').value = '';
@@ -1509,12 +1560,24 @@ async function salvaDiretto() {
   const editoreRaw = document.getElementById('dir-editore-val').value;
   const qta = parseInt(document.getElementById('dir-qta').value) || 0;
   const motivo = document.getElementById('dir-motivo').value.trim();
+  const codMeli = document.getElementById('dir-cod-meli').value.trim();
+  const nomeLib = document.getElementById('dir-nome-lib').value.trim();
+  const indirizzo = document.getElementById('dir-indirizzo').value.trim();
+  const cap = document.getElementById('dir-cap').value.trim();
+  const citta = document.getElementById('dir-citta').value.trim();
+  const prov = document.getElementById('dir-prov').value.trim().toUpperCase();
   let valid = true;
-  if (!ean) { document.getElementById('dir-ean').classList.add('err'); valid = false; }
-  if (!titolo) { document.getElementById('dir-titolo').classList.add('err'); valid = false; }
-  if (!editoreRaw) { document.getElementById('dir-editore-search').classList.add('err'); valid = false; }
-  if (!qta) { document.getElementById('dir-qta').classList.add('err'); valid = false; }
-  if (!motivo) { document.getElementById('dir-motivo').classList.add('err'); valid = false; }
+  if (!ean)       { document.getElementById('dir-ean').classList.add('err'); valid = false; }
+  if (!titolo)    { document.getElementById('dir-titolo').classList.add('err'); valid = false; }
+  if (!editoreRaw){ document.getElementById('dir-editore-search').classList.add('err'); valid = false; }
+  if (!qta)       { document.getElementById('dir-qta').classList.add('err'); valid = false; }
+  if (!motivo)    { document.getElementById('dir-motivo').classList.add('err'); valid = false; }
+  if (!codMeli)   { document.getElementById('dir-cod-meli').classList.add('err'); valid = false; }
+  if (!nomeLib)   { document.getElementById('dir-nome-lib').classList.add('err'); valid = false; }
+  if (!indirizzo) { document.getElementById('dir-indirizzo').classList.add('err'); valid = false; }
+  if (!cap)       { document.getElementById('dir-cap').classList.add('err'); valid = false; }
+  if (!citta)     { document.getElementById('dir-citta').classList.add('err'); valid = false; }
+  if (!prov)      { document.getElementById('dir-prov').classList.add('err'); valid = false; }
   if (!valid) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Verifica i campi obbligatori.</div>'; return; }
   let editore = {};
   try { editore = JSON.parse(editoreRaw); } catch(e) { alertEl.innerHTML = '<div class="alert alert-error">⚠ Seleziona un editore dalla lista.</div>'; return; }
@@ -1530,6 +1593,9 @@ async function salvaDiretto() {
     oda: document.getElementById('dir-oda').value.trim() || null,
     data_richiesta: document.getElementById('dir-data').value || new Date().toISOString().slice(0,10),
     motivo,
+    cod_meli: codMeli,
+    nome_libreria: nomeLib,
+    indirizzo, cap, citta, provincia: prov,
     inviato: false
   };
   const { error } = await sb.from('diretti_editore').insert(payload);
@@ -1556,6 +1622,7 @@ async function loadDirettiNonInviati() {
     const sconto = r.sconto ? `<span style="color:var(--testo-sub)">Sc.: ${r.sconto}%</span>` : '';
     const pag = r.pagamento ? `<span style="color:var(--testo-sub)">Pag.: ${r.pagamento}gg</span>` : '';
     const oda = r.oda ? `<span style="color:var(--testo-sub)">ODA: ${r.oda}</span>` : '';
+    const libInfo = [r.nome_libreria, r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ');
     // Corpo mail
     const corpo = encodeURIComponent(
 `Buongiorno,
@@ -1569,6 +1636,13 @@ Editore: ${r.editore_nome} (${r.editore_cod})
 Quantità: ${r.quantita}${r.sconto ? '\nSconto occas.: ' + r.sconto + '%' : ''}${r.pagamento ? '\nPagamento occas.: ' + r.pagamento + ' gg' : ''}${r.oda ? '\nODA / N. Ordine: ' + r.oda : ''}
 Data richiesta: ${dt}
 Motivo: ${r.motivo}
+
+──────────────────────────────
+DESTINATARIO
+Cod. Cliente MELI: ${r.cod_meli || '—'}
+Libreria: ${r.nome_libreria || '—'}
+Indirizzo: ${r.indirizzo || '—'}
+CAP / Città: ${r.cap || ''} ${r.citta || ''} (${r.provincia || ''})
 ──────────────────────────────
 
 Inserita da: ${r.agente}
@@ -1597,7 +1671,8 @@ Inserita da: ${r.agente}
           <span style="color:var(--testo-dim)">Qta: <strong>${r.quantita}</strong></span>
           ${sconto}${pag}${oda}
         </div>
-        <div style="font-size:.75rem;color:var(--warn)">${r.motivo}</div>
+        <div style="font-size:.75rem;color:var(--warn);margin-bottom:.35rem">${r.motivo}</div>
+        ${libInfo ? `<div style="font-size:.74rem;color:var(--testo-dim)">📦 <strong style="color:var(--testo)">${r.nome_libreria||''}</strong>${r.cod_meli ? ` <span style="font-family:'DM Mono',monospace;color:var(--azzurro);font-size:.7rem">${r.cod_meli}</span>` : ''} — ${[r.indirizzo, r.cap, r.citta, r.provincia].filter(Boolean).join(', ')}</div>` : ''}
         ${r.editore_email ? `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 A: ${r.editore_email} — CC: ${CC_FISSI}, ${r.agente}</div>` : `<div style="font-size:.7rem;color:var(--testo-sub);margin-top:.3rem">📧 CC: ${CC_FISSI}, ${r.agente}</div>`}
       </div>
     </div>`;
@@ -1615,6 +1690,75 @@ async function segnaInviato(id) {
   }
 }
 
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(title, msg, type='info', duration=6000) {
+  const container = document.getElementById('toast-container');
+  const id = 'toast-' + Date.now();
+  const icon = type === 'warn' ? '📦' : '🔔';
+  const cls = type === 'warn' ? 'toast toast-warn' : 'toast';
+  const el = document.createElement('div');
+  el.className = cls; el.id = id;
+  el.innerHTML = `
+    <span class="toast-icon">${icon}</span>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${msg}</div>
+    </div>
+    <button class="toast-close" onclick="removeToast('${id}')">✕</button>`;
+  container.appendChild(el);
+  if(duration) setTimeout(() => removeToast(id), duration);
+}
+
+function removeToast(id) {
+  const el = document.getElementById(id);
+  if(el) { el.style.opacity='0'; el.style.transform='translateX(30px)'; el.style.transition='all .2s'; setTimeout(()=>el.remove(), 200); }
+}
+
+// ── REALTIME DIRETTI EDITORE ──────────────────────────────────
+let direttiChannel = null;
+let direttiPendingCount = 0;
+
+function setupDirettiRealtime() {
+  if(direttiChannel) return;
+  direttiChannel = sb.channel('diretti-editore-inserts')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'diretti_editore' }, payload => {
+      const r = payload.new;
+      // Non notificare se è stato inserito da me stesso
+      if(r.agente === currentUser?.email) return;
+      direttiPendingCount++;
+      aggiornaTabBadge();
+      showToast(
+        '📦 Nuova richiesta diretto editore',
+        `<strong>${r.agente}</strong> ha inserito: <em>${r.titolo}</em> — ${r.editore_nome} — qta ${r.quantita}`,
+        'warn', 10000
+      );
+      // Se siamo già sulla tab diretti-send, ricarica
+      const sendTab = document.getElementById('tab-diretti-send');
+      if(sendTab && sendTab.style.display !== 'none') loadDirettiNonInviati();
+    })
+    .subscribe();
+}
+
+function aggiornaTabBadge() {
+  const btn = document.getElementById('tab-dir-send-btn');
+  if(!btn) return;
+  // Rimuovi badge esistente
+  const old = btn.querySelector('.tab-badge');
+  if(old) old.remove();
+  if(direttiPendingCount > 0) {
+    const badge = document.createElement('span');
+    badge.className = 'tab-badge';
+    badge.textContent = direttiPendingCount;
+    btn.appendChild(badge);
+  }
+}
+
+// Resetta badge quando si apre la tab invio
+function resetDirettiBadge() {
+  direttiPendingCount = 0;
+  aggiornaTabBadge();
+}
+
 // ── LOGOUT ────────────────────────────────────────────────────
 async function doLogout() {
   await sb.auth.signOut();
@@ -1629,6 +1773,7 @@ async function doLogout() {
   destIdCounter = 0; artCounters = {};
   sospDestCounter = 0; sospArtCounters = {};
   if (bozzeInterval) clearInterval(bozzeInterval);
+  if (direttiChannel) { sb.removeChannel(direttiChannel); direttiChannel = null; }
 }
 </script>
 </body>
